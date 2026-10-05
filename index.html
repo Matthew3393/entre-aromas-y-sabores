@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
   <script src="supabase-client.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,13 +38,53 @@
     }
 
     header {
-      background: linear-gradient(135deg, #ea580c, #c2410c);
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
       color: white;
-      padding: 32px 20px 28px;
+      padding: 24px 20px 22px;
       text-align: center;
       border-bottom-left-radius: 28px;
       border-bottom-right-radius: 28px;
-      box-shadow: 0 10px 25px rgba(234, 88, 12, 0.25);
+      box-shadow: 0 10px 25px rgba(27, 67, 50, 0.25);
+    }
+
+    .logo-header-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .header-logo-img {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+      background: #faf8f5;
+      transition: transform 0.2s ease;
+    }
+
+    .header-logo-img:hover {
+      transform: scale(1.04);
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 18px 14px 18px;
+      }
+      .header-logo-img {
+        width: 78px;
+        height: 78px;
+      }
+      header h1 {
+        font-size: 1.45rem !important;
+      }
+      header p {
+        font-size: 0.88rem !important;
+      }
+      .footer-bar {
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+      }
     }
 
     .badge-semana {
@@ -929,6 +971,9 @@
 <body>
 
   <header>
+    <div class="logo-header-wrap">
+      <img src="logo.jpg" alt="Entre Aromas y Sabores" class="header-logo-img">
+    </div>
     <div class="badge-semana">✨ Pedidos para la próxima semana</div>
     <h1>Entre Aromas y Sabores</h1>
     <p>Comida fresca, rica y hecha como en casa. Elegí qué querés comer de Lunes a Viernes.</p>

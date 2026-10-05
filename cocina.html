@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entre Aromas y Sabores - Panel de Cocina</title>
@@ -38,7 +40,7 @@
     }
 
     header {
-      background: linear-gradient(135deg, #0f766e, #134e4a);
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
       color: white;
       padding: 28px 20px 22px;
       box-shadow: 0 4px 20px rgba(15, 118, 110, 0.25);
@@ -495,6 +497,58 @@
     .btn-del { background: var(--red-bg); color: var(--red-text); }
     .btn-edit:hover { background: #bbf7d0; }
     .btn-del:hover { background: #fecaca; }
+    .cocina-logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      background: #faf8f5;
+    }
+
+    @media (max-width: 640px) {
+      .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .header-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+      }
+      .header-actions .btn {
+        flex: 1;
+        justify-content: center;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+      }
+      .metric-card {
+        padding: 12px 14px;
+      }
+      .metric-val {
+        font-size: 1.3rem;
+      }
+      .view-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        padding-bottom: 6px;
+      }
+      .view-tabs::-webkit-scrollbar { display: none; }
+      .schedule-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .schedule-input-group {
+        min-width: 100%;
+      }
+    }
   </style>
   <script src="supabase-client.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
