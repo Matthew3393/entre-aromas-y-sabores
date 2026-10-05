@@ -549,6 +549,31 @@
         min-width: 100%;
       }
     }
+  
+    /* Ocultar marca de agua y drawer inyectados por Netlify */
+    #netlify-drawer,
+    .netlify-drawer,
+    [data-netlify-drawer],
+    netlify-drawer,
+    iframe[id*="netlify"],
+    iframe[title*="Netlify"],
+    iframe[title*="feedback"],
+    div[class*="netlify"],
+    div[id*="netlify"],
+    button[aria-label*="Netlify"] {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      position: absolute !important;
+      top: -9999px !important;
+      left: -9999px !important;
+      z-index: -9999 !important;
+    }
+
   </style>
   <script src="supabase-client.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -1741,6 +1766,18 @@
         } catch(e) {}
       }, 6000);
     });
+  
+    // Remover cualquier elemento inyectado por Netlify automáticamente
+    function limpiarMarcaNetlify() {
+      const selectors = ['#netlify-drawer', '.netlify-drawer', '[data-netlify-drawer]', 'netlify-drawer', 'iframe[title*="Netlify"]', 'iframe[title*="feedback"]'];
+      selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => el.remove());
+      });
+    }
+    window.addEventListener('DOMContentLoaded', limpiarMarcaNetlify);
+    window.addEventListener('load', limpiarMarcaNetlify);
+    setInterval(limpiarMarcaNetlify, 800);
+
   </script>
 </body>
 </html>
