@@ -1654,18 +1654,27 @@
       if (!pedidosAbiertos) {
         btnConfirmar.disabled = true;
         btnConfirmar.textContent = "Pedidos Cerrados (Abre el Lunes)";
-        btnConfirmar.style.opacity = "0.7";
+        btnConfirmar.style.opacity = "0.6";
+        btnConfirmar.style.cursor = "not-allowed";
+      } else if (totalCant === 0) {
+        btnConfirmar.disabled = true;
+        btnConfirmar.textContent = "Seleccioná tus viandas";
+        btnConfirmar.style.opacity = "0.5";
         btnConfirmar.style.cursor = "not-allowed";
       } else {
-        btnConfirmar.disabled = (totalCant === 0);
+        btnConfirmar.disabled = false;
         btnConfirmar.textContent = "Confirmar Pedido";
         btnConfirmar.style.opacity = "1";
         btnConfirmar.style.cursor = "pointer";
       }
     }
 
-    // Enviar Pedido
+    // Enviar Pedido con protección contra doble clic
+    let enviandoPedidoActualmente = false;
+
     btnConfirmar.addEventListener("click", async () => {
+      if (enviandoPedidoActualmente) return;
+
       if (!pedidosAbiertos) {
         alert("Los pedidos para la próxima semana están cerrados. La cocina ya se encuentra preparando las viandas. Se vuelven a abrir el próximo lunes.");
         return;
@@ -1721,6 +1730,7 @@
         return;
       }
 
+      enviandoPedidoActualmente = true;
       btnConfirmar.disabled = true;
       btnConfirmar.textContent = "Guardando pedido...";
 
@@ -1811,10 +1821,8 @@
         console.error(err);
         alert("Error de conexión al enviar el pedido.");
       } finally {
-        if (pedidosAbiertos) {
-          btnConfirmar.textContent = "Confirmar Pedido";
-          btnConfirmar.disabled = false;
-        }
+        enviandoPedidoActualmente = false;
+        actualizarResumenTotales();
       }
     });
 
@@ -1914,86 +1922,125 @@
     function renderMisPedidosData(pedidos) {
       const contenedor = document.getElementById("misPedidosLista");
       if (!pedidos || pedidos.length === 0) {
-        contenedor.innerHTML = "<div style='text-align: center; padding: 24px; color: var(--gray-600); font-size: 0.9rem;'>No tenés pedidos registrados aún para la próxima semana.</div>";
+        contenedor.innerHTML = "<div style='text-align: center; padding: 28px 16px; color: var(--gray-600); font-size: 0.92rem;'>No tenés pedidos registrados aún para la próxima semana.</div>";
         return;
       }
 
-      let html = "";
+      // 1. Calcular totales del pedido semanal
+      let totalViandas = 0;
+      let totalDinero = 0;
+      let totalPagado = 0;
+
       pedidos.forEach(p => {
-        let cancelBlock = "";
-        if (p.puede_cancelar) {
-          cancelBlock = `
-            <div class="time-badge-ok" style="margin-top: 6px;">⏱️ Podés cancelar o modificar hasta el Miércoles a las 12 PM</div>
-            <button type="button" class="btn-cancelar" onclick="cancelarPedido(${p.id})">🗑️ Cancelar este pedido</button>
-          `;
-        } else {
-          const cleanWa = (p.whatsapp_mama || whatsappMama || "").replace(/\D/g, "");
-          const mensajeWa = encodeURIComponent(`¡Hola! Te escribo para consultar/modificar mi pedido #${p.id} (${p.cantidad}x ${p.plato} para el ${p.dia}).`);
-          const waHref = cleanWa ? `https://wa.me/${cleanWa}?text=${mensajeWa}` : `https://wa.me/?text=${mensajeWa}`;
+        totalViandas += (p.cantidad || 1);
+        totalDinero += (p.total || 0);
+        if (p.pagado) totalPagado += (p.total || 0);
+      });
 
-          cancelBlock = `
-            <div class="time-badge-expired" style="margin-top: 6px;">🔒 Cancelación web finalizada (Límite Miércoles 12 PM)</div>
-            <p style="font-size: 0.78rem; color: var(--gray-600); margin-top: 4px;">La cocina ya está en preparación. Si necesitás cancelar o cambiar algo urgente, comunicate directamente por WhatsApp:</p>
-            <a href="${waHref}" target="_blank" class="btn-wa-help">💬 Avisar por WhatsApp</a>
-          `;
-        }
+      const saldoPendiente = totalDinero - totalPagado;
+      const todosPagados = (totalPagado >= totalDinero && totalDinero > 0);
+      const aliasFinal = (configGlobal && configGlobal.alias_mercadopago) || aliasMercadoPago || "julia.rabovich";
 
-        let pagoBlock = "";
-        const aliasPed = p.alias_mercadopago || aliasMercadoPago || "julia.rabovich";
-        if (!p.pagado) {
-          pagoBlock = `
-            <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 12px; margin-top: 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <strong style="color: #0369a1; font-size: 0.82rem;">💳 Pendiente de Pago por Mercado Pago</strong>
-                <button type="button" class="btn-mp-copy" style="padding: 3px 8px; font-size: 0.72rem;" onclick="copiarAlias('${aliasPed}')">📋 Copiar Alias</button>
-              </div>
-              <div style="font-size: 0.78rem; color: var(--gray-600);">
-                Transferir <b>$${p.total.toLocaleString('es-AR')}</b> al alias: <b style="color: #0284c7; font-family: monospace;">${aliasPed}</b>
-              </div>
-              <div style="display: flex; gap: 6px; margin-top: 6px;">
-                <button type="button" class="btn-mp-primary" style="padding: 6px 12px; font-size: 0.78rem; border-radius: 8px;" onclick="abrirMercadoPagoApp('${aliasPed}', '${p.link_pago_mp || ''}')">
-                  🚀 Abrir Mercado Pago
+      // 2. Tarjeta Unificada de Pago / Confirmación
+      let cabeceraHtml = "";
+      if (todosPagados) {
+        cabeceraHtml = `
+          <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 2px;">🎉</div>
+            <strong style="color: #065f46; font-size: 1.15rem; display: block; font-weight: 800;">¡Tu pedido está 100% Confirmado!</strong>
+            <span style="color: #047857; font-size: 0.88rem; display: block; margin-top: 4px; line-height: 1.4;">
+              Ya recibimos el pago total de <b>$${Math.round(totalDinero).toLocaleString('es-AR')}</b>. ¡Muchas gracias por tu compra!
+            </span>
+          </div>
+        `;
+      } else {
+        const waClean = (whatsappMama || "").replace(/\D/g, "");
+        const textoComprobante = encodeURIComponent(`¡Hola! Te paso el comprobante de transferencia a ${aliasFinal} por el total de $${Math.round(saldoPendiente).toLocaleString('es-AR')} de mi pedido de viandas:`);
+        const hrefWa = waClean ? `https://wa.me/${waClean}?text=${textoComprobante}` : `https://wa.me/?text=${textoComprobante}`;
+
+        cabeceraHtml = `
+          <div class="mp-payment-card" style="margin-bottom: 16px; border: 2px solid #38bdf8;">
+            <div class="mp-badge">
+              <span>💳 Pago Pendiente por Mercado Pago</span>
+            </div>
+            <div class="mp-amount-row">
+              <span class="mp-amount-label">Monto total a transferir:</span>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px;">
+                <span class="mp-amount-val">$${Math.round(saldoPendiente).toLocaleString('es-AR')}</span>
+                <button type="button" class="btn-mp-copy" style="padding: 4px 10px; font-size: 0.75rem;" onclick="copiarTextoPortapapeles('${saldoPendiente}')">
+                  📋 Copiar Monto
                 </button>
               </div>
+              ${totalPagado > 0 ? `<div style="font-size: 0.78rem; color: #166534; font-weight: 700; margin-top: 4px;">(Ya abonaste $${Math.round(totalPagado).toLocaleString('es-AR')})</div>` : ''}
             </div>
-          `;
-        } else {
-          pagoBlock = `
-            <div class="card-pago-confirmado">
-              <span style="font-size: 1.5rem;">✅</span>
-              <div>
-                <strong style="color: #065f46; font-size: 0.95rem; display: block; margin-bottom: 2px;">Pago confirmado</strong>
-                <span style="color: #047857; font-size: 0.8rem; line-height: 1.4; display: block;">Ya recibimos tu pago. ¡Muchas gracias por tu compra!</span>
+
+            <div class="mp-alias-container">
+              <div class="mp-alias-sub">Alias de Mercado Pago:</div>
+              <div class="mp-alias-display">
+                <strong>${aliasFinal}</strong>
               </div>
+              <button type="button" class="btn-mp-copy" onclick="copiarAlias('${aliasFinal}')">
+                📋 Copiar Alias
+              </button>
             </div>
-          `;
+
+            <div class="mp-actions-stack">
+              <button type="button" class="btn-mp-primary" onclick="abrirMercadoPagoApp('${aliasFinal}')">
+                🚀 Abrir Mercado Pago para Transferir
+              </button>
+              <a href="${hrefWa}" target="_blank" class="btn-wa-comprobante">
+                💬 Enviar comprobante por WhatsApp
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. Lista agrupada de viandas pedidas por día
+      let itemsHtml = `
+        <div style="background: white; border: 1.5px solid var(--gray-200); border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed var(--gray-200); padding-bottom: 8px;">
+            <strong style="color: var(--dark); font-size: 0.95rem;">📋 Detalle de tus viandas:</strong>
+            <span style="background: var(--primary-light); color: var(--primary); font-weight: 800; font-size: 0.8rem; padding: 2px 8px; border-radius: 8px;">
+              ${totalViandas} vianda${totalViandas !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+      `;
+
+      pedidos.forEach(p => {
+        let cancelBtn = "";
+        if (p.puede_cancelar) {
+          cancelBtn = `<button type="button" onclick="cancelarPedido(${p.id})" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 8px; padding: 3px 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">🗑️ Cancelar</button>`;
         }
 
-        html += `
-          <div class="order-history-card" id="pedido-card-${p.id}">
-            <div class="order-history-header">
-              <div>
-                <strong style="color: var(--primary);">📅 ${p.dia}</strong>
-                <span style="font-size: 0.78rem; color: var(--gray-600); margin-left: 6px;">#${p.id}</span>
+        itemsHtml += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--gray-50); border-radius: 10px; border: 1px solid var(--gray-100);">
+            <div style="flex: 1; padding-right: 8px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 800; color: #1e40af; font-size: 0.82rem;">📅 ${p.dia}</span>
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--dark);">${p.cantidad}x ${p.plato}</span>
               </div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <strong style="color: var(--dark); font-size: 1rem;">$${p.total.toLocaleString('es-AR')}</strong>
-                <span class="badge-status-pago ${p.pagado ? 'pago-si' : 'pago-no'}">
-                  ${p.pagado ? '✅ Pago confirmado' : '⏳ Pendiente'}
-                </span>
-              </div>
+              ${p.notas ? `<div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 2px;">Nota: ${p.notas}</div>` : ''}
             </div>
-            <div style="font-weight: 700; font-size: 0.92rem; color: var(--dark);">${p.cantidad}x ${p.plato}</div>
-            <div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 2px;">
-              Pedido: ${p.fecha_registro}
-              ${p.notas ? `<br><i>Nota: "${p.notas}"</i>` : ''}
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-weight: 800; color: var(--dark); font-size: 0.9rem;">$${Math.round(p.total).toLocaleString('es-AR')}</span>
+              ${cancelBtn}
             </div>
-            ${pagoBlock}
-            ${cancelBlock}
           </div>
         `;
       });
-      contenedor.innerHTML = html;
+
+      itemsHtml += `
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1.5px solid var(--gray-200);">
+            <span style="font-weight: 800; font-size: 1rem; color: var(--dark);">Total del Pedido:</span>
+            <span style="font-weight: 800; font-size: 1.25rem; color: var(--primary);">$${Math.round(totalDinero).toLocaleString('es-AR')}</span>
+          </div>
+        </div>
+      `;
+
+      contenedor.innerHTML = cabeceraHtml + itemsHtml;
     }
 
     async function cargarMisPedidosData(wa) {
