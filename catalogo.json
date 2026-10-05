@@ -1,0 +1,158 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "nombre": "Bondiola c/ salsa agridulce y puré de boniato",
+      "precio": 12000.0,
+      "dias": [
+        "Martes"
+      ],
+      "aliases": [
+        "bondiola",
+        "pure de boniato",
+        "salsa agridulce",
+        "bondiola agridulce"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 2,
+      "nombre": "Pata muslo c/ ensalada rusa",
+      "precio": 12000.0,
+      "dias": [
+        "Miércoles"
+      ],
+      "aliases": [
+        "pata muslo",
+        "patamuslo",
+        "rusa",
+        "ensalada rusa"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 3,
+      "nombre": "Wok de vegetales c/ arroz yamaní",
+      "precio": 12000.0,
+      "dias": [
+        "Jueves"
+      ],
+      "aliases": [
+        "wok",
+        "wok de vegetales",
+        "arroz yamani"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 4,
+      "nombre": "Pastel de papa y calabaza",
+      "precio": 12000.0,
+      "dias": [
+        "Viernes"
+      ],
+      "aliases": [
+        "pastel",
+        "pastel de papa y calabaza",
+        "calabaza",
+        "pastel de papa"
+      ],
+      "foto": "https://images.unsplash.com/photo-1544025162-d76694265947?w=300"
+    },
+    {
+      "id": 5,
+      "nombre": "Tarta integral c/ guarnición",
+      "precio": 10000.0,
+      "dias": [
+        "Todos"
+      ],
+      "sabores": [
+        "Verduras",
+        "Jamón, queso y papa",
+        "Calabaza, ceb. caram. y queso azul",
+        "Zapallitos"
+      ],
+      "tipo": "tarta",
+      "aliases": [
+        "tarta",
+        "tarta integral",
+        "guarnicion"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 6,
+      "nombre": "Ensalada",
+      "precio": 10000.0,
+      "dias": [
+        "Todos"
+      ],
+      "sabores": [
+        "Cesar (pollo)",
+        "Completa (proteina)"
+      ],
+      "tipo": "ensalada",
+      "aliases": [
+        "ensalada",
+        "cesar",
+        "completa"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 7,
+      "nombre": "Empanadas",
+      "descripcion": "Bandeja de 3 empanadas a elección",
+      "precio": 9000.0,
+      "dias": [
+        "Todos"
+      ],
+      "sabores": [
+        "Carne",
+        "Verdura",
+        "Jamón y Queso"
+      ],
+      "tipo": "empanadas",
+      "aliases": [
+        "empanadas",
+        "bandeja de empanadas",
+        "empanadas x3"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 8,
+      "nombre": "Sandwiches",
+      "descripcion": "Sandwich a elección",
+      "precio": 10000.0,
+      "dias": [
+        "Todos"
+      ],
+      "sabores": [
+        "Algarroba c/ j. crudo, zuchinis, tomate confit y rúcula",
+        "Berenjena con pan integral, morrón, tomate confit y rúcula",
+        "Sandwich de Milanesa"
+      ],
+      "tipo": "sandwiches",
+      "aliases": [
+        "sandwich",
+        "sandwiches",
+        "sanguche"
+      ],
+      "foto": ""
+    },
+    {
+      "id": 9,
+      "nombre": "Fruta",
+      "precio": 3000.0,
+      "dias": [
+        "Todos"
+      ],
+      "aliases": [
+        "fruta",
+        "postre"
+      ],
+      "foto": ""
+    }
+  ]
+}

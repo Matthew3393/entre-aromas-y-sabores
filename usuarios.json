@@ -1,0 +1,74 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nombre": "Martin Palermo",
+      "whatsapp": "11 5555 4444",
+      "direccion": "",
+      "notas_frecuentes": "Entregar en portería",
+      "pedidos_count": 1,
+      "fecha_registro": "2026-10-02 17:19",
+      "ultimo_acceso": "2026-10-02 17:19"
+    },
+    {
+      "id": 2,
+      "nombre": "Julia Rabovich",
+      "whatsapp": "2944335900",
+      "direccion": "",
+      "notas_frecuentes": "sin pure",
+      "pedidos_count": 2,
+      "fecha_registro": "2026-10-02 17:21",
+      "ultimo_acceso": "2026-10-02 17:49"
+    },
+    {
+      "id": 3,
+      "nombre": "Carlos López",
+      "whatsapp": "1198765432",
+      "direccion": "",
+      "notas_frecuentes": "Entregar a las 13hs",
+      "pedidos_count": 1,
+      "fecha_registro": "2026-10-02 17:38",
+      "ultimo_acceso": "2026-10-02 17:38"
+    },
+    {
+      "id": 4,
+      "nombre": "Martina Suarez",
+      "whatsapp": "1144556677",
+      "direccion": "",
+      "notas_frecuentes": "",
+      "pedidos_count": 1,
+      "fecha_registro": "2026-10-02 17:47",
+      "ultimo_acceso": "2026-10-02 17:47"
+    },
+    {
+      "id": 5,
+      "nombre": "Test Pago",
+      "whatsapp": "1122334455",
+      "direccion": "",
+      "notas_frecuentes": "",
+      "pedidos_count": 1,
+      "fecha_registro": "2026-10-02 18:02",
+      "ultimo_acceso": "2026-10-02 18:02"
+    },
+    {
+      "id": 6,
+      "nombre": "Hola",
+      "whatsapp": "123",
+      "direccion": "",
+      "notas_frecuentes": "",
+      "pedidos_count": 1,
+      "fecha_registro": "2026-10-02 18:03",
+      "ultimo_acceso": "2026-10-02 18:03"
+    },
+    {
+      "id": 7,
+      "nombre": "Lsls",
+      "whatsapp": "020202",
+      "direccion": "",
+      "notas_frecuentes": "kjkjhkjh",
+      "pedidos_count": 2,
+      "fecha_registro": "2026-10-04 19:30",
+      "ultimo_acceso": "2026-10-05 15:46"
+    }
+  ]
+}

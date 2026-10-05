@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entre Aromas y Sabores - Panel de Cocina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-hover: #115e59;
+      --primary-light: #ccfbf1;
+      --accent: #ea580c;
+      --dark: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --green-bg: #dcfce7;
+      --green-text: #166534;
+      --red-bg: #fee2e2;
+      --red-text: #991b1b;
+      --radius: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f1f5f9;
+      color: var(--gray-800);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f766e, #134e4a);
+      color: white;
+      padding: 28px 20px 22px;
+      box-shadow: 0 4px 20px rgba(15, 118, 110, 0.25);
+    }
+
+    .header-top {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-light:hover { background: #f8fafc; }
+
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-accent:hover { background: #c2410c; }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto 0;
+      padding: 0 16px;
+    }
+
+    /* Panel de Control de Horario y Apertura de Pedidos */
+    .schedule-control-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+    }
+    .schedule-control-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .schedule-status-badge {
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-open {
+      background: #dcfce7;
+      color: #166534;
+      border: 1.5px solid #86efac;
+    }
+    .badge-closed {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1.5px solid #fca5a5;
+    }
+    .schedule-info-text {
+      font-size: 0.88rem;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+    .schedule-form {
+      display: flex;
+      gap: 14px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      background: var(--gray-50);
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+    }
+    .schedule-input-group {
+      flex: 1;
+      min-width: 220px;
+    }
+    .schedule-input-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      margin-bottom: 5px;
+    }
+    .schedule-input-group select, .schedule-input-group input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-200);
+      font-family: inherit;
+      font-size: 0.88rem;
+      background: white;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .schedule-input-group select:focus, .schedule-input-group input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Tarjetas de Métricas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+    }
+
+    .metric-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .metric-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    /* Pestañas de Vista */
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--gray-200);
+      padding-bottom: 8px;
+    }
+
+    .v-tab {
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .v-tab.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Sección Cocina */
+    .kitchen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .day-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+    }
+
+    .day-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.5px solid var(--gray-100);
+      padding-bottom: 8px;
+    }
+
+    .day-total-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .cook-item {
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+    .cook-item:last-child { border-bottom: none; }
+
+    .cook-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .cook-dish {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--dark);
+    }
+
+    .cook-qty {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent);
+      background: #ffedd5;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+
+    .cook-clients {
+      font-size: 0.82rem;
+      color: var(--gray-600);
+    }
+
+    /* Tabla de Pedidos */
+    .table-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: var(--gray-50);
+      color: var(--gray-600);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 1.5px solid var(--gray-200);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .badge-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+    .badge-status:active { transform: scale(0.95); }
+
+    .status-paid { background: var(--green-bg); color: var(--green-text); }
+    .status-unpaid { background: var(--red-bg); color: var(--red-text); }
+    .status-delivered { background: #e0f2fe; color: #0369a1; }
+    .status-undelivered { background: var(--gray-100); color: var(--gray-600); }
+
+    .btn-filter-pill {
+      background: white;
+      border: 1.5px solid var(--gray-300);
+      color: var(--gray-700);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-filter-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .btn-filter-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
+    }
+
+    .btn-pago-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1.5px solid transparent;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .btn-pago-toggle.pago-no {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+    .btn-pago-toggle.pago-no:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+    .btn-pago-toggle.pago-si {
+      background: #ecfdf5;
+      color: #059669;
+      border-color: #a7f3d0;
+    }
+    .btn-pago-toggle.pago-si:hover {
+      background: #d1fae5;
+      border-color: #10b981;
+      transform: translateY(-1px);
+    }
+
+    .btn-wa {
+      background: #25d366;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.95rem;
+    }
+
+    /* Modal y Formularios de Platos */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: white;
+      border-radius: 20px;
+      padding: 26px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gray-200);
+      font-family: inherit;
+      font-size: 0.92rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.1s ease;
+    }
+    .btn-edit { background: var(--primary-light); color: var(--primary); }
+    .btn-del { background: var(--red-bg); color: var(--red-text); }
+    .btn-edit:hover { background: #bbf7d0; }
+    .btn-del:hover { background: #fecaca; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>👩‍🍳 Entre Aromas y Sabores</h1>
+        <p style="font-size: 0.88rem; opacity: 0.9;">Panel de Cocina - Control semanal de pedidos y preparación</p>
+      </div>
+      <div class="header-actions">
+        <a href="/descargar-excel" class="btn btn-light">
+          📥 Descargar Excel
+        </a>
+        <a href="/" target="_blank" class="btn btn-accent">
+          🔗 Abrir Página Clientes
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Panel de Control de Horario y Apertura de Pedidos -->
+    <div class="schedule-control-card">
+      <div class="schedule-control-header">
+        <div class="schedule-status-badge {{ 'badge-open' if pedidos_abiertos else 'badge-closed' }}">
+          {{ '🟢 RECIBIENDO PEDIDOS AHORA' if pedidos_abiertos else '🔒 PEDIDOS CERRADOS AHORA' }}
+        </div>
+        <div class="schedule-info-text">{{ estado_pedidos_msg }}</div>
+      </div>
+      
+      <form class="schedule-form" onsubmit="guardarConfig(event)">
+        <div class="schedule-input-group">
+          <label for="cfgModo">Modo de Apertura de la Web:</label>
+          <select id="cfgModo" name="modo_pedidos">
+            <option value="auto" {% if config.modo_pedidos == 'auto' %}selected{% endif %}>🕒 Automático (Abierto Lun a Mié 12 PM, Cerrado Jue a Dom)</option>
+            <option value="abierto" {% if config.modo_pedidos == 'abierto' %}selected{% endif %}>🔓 Forzar Abierto (Permitir pedidos siempre / Modo pruebas)</option>
+            <option value="cerrado" {% if config.modo_pedidos == 'cerrado' %}selected{% endif %}>🔒 Forzar Cerrado (Cerrar pedidos inmediatamente)</option>
+          </select>
+        </div>
+
+        <div class="schedule-input-group">
+          <label for="cfgWa">WhatsApp de Contacto (para consultas de clientes):</label>
+          <input type="text" id="cfgWa" name="whatsapp_mama" value="{{ config.whatsapp_mama or '' }}" placeholder="Ej: 5491123456789">
+        </div>
+
+        <div class="schedule-input-group">
+          <label for="cfgAliasMp">Alias de Mercado Pago:</label>
+          <input type="text" id="cfgAliasMp" name="alias_mercadopago" value="{{ config.alias_mercadopago or 'julia.rabovich' }}" placeholder="julia.rabovich">
+        </div>
+
+        <div class="schedule-input-group">
+          <label for="cfgLinkMp">Link de Pago MP (opcional):</label>
+          <input type="url" id="cfgLinkMp" name="link_pago_mp" value="{{ config.link_pago_mp or '' }}" placeholder="https://link.mercadopago.com.ar/tunegocio">
+        </div>
+
+        <button type="submit" class="btn btn-accent" id="btnGuardarCfg" style="align-self: flex-end;">
+          💾 Guardar
+        </button>
+      </form>
+    </div>
+
+    <!-- Métricas Rápidas -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Total Viandas</div>
+        <div class="metric-val" id="metricaTotalViandas">{{ total_viandas }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Facturado</div>
+        <div class="metric-val" id="metricaTotalFacturado">${{ "{:,.0f}".format(total_dinero) }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Pedidos Cobrados</div>
+        <div class="metric-val" style="color: var(--green-text);" id="metricaCobrado">${{ "{:,.0f}".format(total_pagado) }}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Pendiente de Cobro</div>
+        <div class="metric-val" style="color: var(--red-text);" id="metricaPendiente">${{ "{:,.0f}".format(total_pendiente) }}</div>
+      </div>
+    </div>
+
+    <!-- Pestañas -->
+    <div class="view-tabs">
+      <button class="v-tab active" onclick="mostrarSeccion('cocina', this)">🍳 ¿Qué hay que cocinar?</button>
+      <button class="v-tab" onclick="mostrarSeccion('pedidos', this)">📋 Lista de Pedidos ({{ pedidos|length }})</button>
+      <button class="v-tab" onclick="mostrarSeccion('precios', this)">🏷️ Menú y Precios</button>
+      <button class="v-tab" onclick="mostrarSeccion('usuarios', this)">👥 Clientes Guardados ({{ usuarios|length if usuarios else 0 }})</button>
+    </div>
+
+    <!-- SECCIÓN 1: COCINA POR DÍA -->
+    <section id="secCocina">
+      {% if cocina_por_dia %}
+        <div class="kitchen-grid">
+          {% for dia, platos in cocina_por_dia.items() %}
+            <div class="day-card">
+              <div class="day-title">
+                <span>📅 {{ dia }}</span>
+                {% set sum_dia = platos.values() | map(attribute='cant') | sum %}
+                <span class="day-total-badge">{{ sum_dia }} vianda{{ 's' if sum_dia != 1 else '' }}</span>
+              </div>
+              {% for plato, info in platos.items() %}
+                <div class="cook-item">
+                  <div class="cook-header">
+                    <span class="cook-dish">{{ plato }}</span>
+                    <span class="cook-qty">{{ info.cant }}</span>
+                  </div>
+                  <div class="cook-clients">
+                    👤 {{ ", ".join(info.clientes) }}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="table-card empty-state">
+          🍳 Aún no hay pedidos registrados para la próxima semana.<br>
+          Compartí el enlace con tus clientes para que comiencen a elegir sus viandas.
+        </div>
+      {% endif %}
+    </section>
+
+    <!-- SECCIÓN 2: LISTA DETALLADA DE PEDIDOS -->
+    <section id="secPedidos" style="display: none;">
+      <div style="background: white; border: 1.5px solid var(--gray-200); border-radius: 16px; padding: 14px 18px; margin-bottom: 16px; box-shadow: var(--shadow-sm);">
+        
+        <!-- Fila 1: Filtro por Día y Selector de Orden -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--gray-200);">
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <span style="font-size: 0.85rem; font-weight: 800; color: var(--dark); margin-right: 4px;">📅 Día:</span>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill active" onclick="filtrarDiaListaPedidos('todos', this)">
+              Todos los Días
+            </button>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill" onclick="filtrarDiaListaPedidos('Lunes', this)">
+              Lunes
+            </button>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill" onclick="filtrarDiaListaPedidos('Martes', this)">
+              Martes
+            </button>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill" onclick="filtrarDiaListaPedidos('Miércoles', this)">
+              Miércoles
+            </button>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill" onclick="filtrarDiaListaPedidos('Jueves', this)">
+              Jueves
+            </button>
+            <button type="button" class="btn-filter-pill btn-dia-pedido-pill" onclick="filtrarDiaListaPedidos('Viernes', this)">
+              Viernes
+            </button>
+          </div>
+
+          <!-- Selector de Ordenamiento -->
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="selectOrdenPedidos" style="font-size: 0.84rem; font-weight: 800; color: var(--dark); white-space: nowrap;">↕️ Ordenar por:</label>
+            <select id="selectOrdenPedidos" onchange="cambiarOrdenPedidos(this.value)" style="padding: 7px 12px; border-radius: 10px; border: 1.5px solid var(--gray-200); font-size: 0.85rem; font-weight: 700; background: white; color: var(--dark); cursor: pointer;">
+              <option value="dia_asc">📅 Día de la semana (Lunes a Viernes)</option>
+              <option value="dia_desc">📅 Día de la semana (Viernes a Lunes)</option>
+              <option value="id_desc">🕒 Más recientes (#ID descendente)</option>
+              <option value="id_asc">🔢 Primeros pedidos (#ID ascendente)</option>
+              <option value="cliente">👤 Cliente (A - Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Fila 2: Filtro de Pago e indicación -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <span style="font-size: 0.85rem; font-weight: 800; color: var(--dark); margin-right: 4px;">💳 Pago:</span>
+            <button type="button" class="btn-filter-pill btn-pago-pill active" id="btnFiltroTodos" onclick="filtrarPagoPedidos('todos', this)">
+              📋 Todos ({{ pedidos|length }})
+            </button>
+            <button type="button" class="btn-filter-pill btn-pago-pill" id="btnFiltroPendientes" onclick="filtrarPagoPedidos('pendientes', this)">
+              ⏳ Solo Pendientes de Pago
+            </button>
+            <button type="button" class="btn-filter-pill btn-pago-pill" id="btnFiltroPagados" onclick="filtrarPagoPedidos('pagados', this)">
+              ✅ Solo Pagados
+            </button>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--gray-600);">
+            💡 Tocá el encabezado <b>"Día"</b> en la tabla para alternar orden al instante.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="table-card">
+        {% if pedidos %}
+          <table>
+            <thead>
+              <tr>
+                <th style="cursor: pointer; user-select: none;" onclick="alternarOrdenId()" title="Ordenar por ID">
+                  ID <span id="iconSortId" style="font-size: 0.75rem;">↕️</span>
+                </th>
+                <th style="cursor: pointer; user-select: none; background: #f8fafc;" onclick="alternarOrdenDia()" title="Ordenar por Día de la semana">
+                  Día <span id="iconSortDia" style="font-size: 0.75rem; color: var(--primary);">🔼 (Lun-Vie)</span>
+                </th>
+                <th style="cursor: pointer; user-select: none;" onclick="alternarOrdenCliente()" title="Ordenar por Cliente">
+                  Cliente <span id="iconSortCli" style="font-size: 0.75rem;">↕️</span>
+                </th>
+                <th>WhatsApp</th>
+                <th>Plato</th>
+                <th>Cant.</th>
+                <th>Total ($)</th>
+                <th>Anotar Pago</th>
+                <th>Entrega</th>
+                <th>Notas</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in pedidos %}
+                <tr id="row-{{ p.id }}" data-id="{{ p.id }}" data-dia="{{ p.dia }}" data-cliente="{{ p.cliente }}" data-pagado="{{ '1' if p.pagado else '0' }}">
+                  <td><b>#{{ p.id }}</b></td>
+                  <td><span style="font-weight: 800; color: #1e40af;">{{ p.dia }}</span></td>
+                  <td><b>{{ p.cliente }}</b></td>
+                  <td>
+                    {% if p.whatsapp %}
+                      {% set wa_clean = p.whatsapp | replace(' ', '') | replace('-', '') | replace('+', '') %}
+                      <a href="https://wa.me/{{ wa_clean }}" target="_blank" class="btn-wa">
+                        💬 {{ p.whatsapp }}
+                      </a>
+                    {% else %}
+                      <span style="color: var(--gray-600);">-</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ p.plato }}</td>
+                  <td><b>x{{ p.cantidad }}</b></td>
+                  <td><b>${{ "{:,.0f}".format(p.total) }}</b></td>
+                  <td>
+                    <button type="button" 
+                            id="btn-pago-{{ p.id }}"
+                            class="btn-pago-toggle {{ 'pago-si' if p.pagado else 'pago-no' }}"
+                            onclick="anotarPago({{ p.id }}, this)"
+                            data-id="{{ p.id }}"
+                            data-pagado="{{ '1' if p.pagado else '0' }}"
+                            data-cliente="{{ p.cliente }}"
+                            title="Haz clic para registrar o anular el pago">
+                      {% if p.pagado %}
+                        ✅ Pagado
+                      {% else %}
+                        ⏳ Marcar Pagado
+                      {% endif %}
+                    </button>
+                  </td>
+                  <td>
+                    <span class="badge-status {{ 'status-delivered' if p.entregado else 'status-undelivered' }}" 
+                          onclick="toggleEstado({{ p.id }}, 'entrega')">
+                      {{ 'ENTREGADO' if p.entregado else 'PENDIENTE' }}
+                    </span>
+                  </td>
+                  <td style="font-size: 0.8rem; color: var(--gray-600);">
+                    {{ p.notas if p.notas else '-' }}
+                  </td>
+                  <td>
+                    <button type="button" class="btn-sm btn-del" onclick="eliminarPedidoCocina({{ p.id }}, '{{ p.cliente }}', '{{ p.plato }}')" title="Eliminar este pedido">
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="empty-state">No hay pedidos cargados todavía.</div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: MENÚ Y PRECIOS -->
+    <section id="secPrecios" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h3 style="font-weight: 800; color: var(--dark); margin: 0 0 4px 0;">Platos del Menú Semanal</h3>
+          <p style="font-size: 0.85rem; color: var(--gray-600); margin: 0;">Podés modificar los platos de cada día por separado o los fijos de toda la semana.</p>
+        </div>
+        <button type="button" class="btn btn-accent" onclick="abrirModalPlato()" id="btnNuevoPlatoDia">
+          ➕ Agregar Plato
+        </button>
+      </div>
+
+      <!-- Filtros por día para gestión separada -->
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+        <button type="button" class="btn-filter-pill btn-dia-pill active" onclick="filtrarPlatosPorDia('todos', this)">
+          📋 Todos
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Todos', this)" style="border-color: #10b981; color: #065f46;">
+          ⭐ Todos los Días (Fijos)
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Lunes', this)">
+          📅 Lunes
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Martes', this)">
+          📅 Martes
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Miércoles', this)">
+          📅 Miércoles
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Jueves', this)">
+          📅 Jueves
+        </button>
+        <button type="button" class="btn-filter-pill btn-dia-pill" onclick="filtrarPlatosPorDia('Viernes', this)">
+          📅 Viernes
+        </button>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Foto</th>
+              <th>Plato / Vianda</th>
+              <th>Día de Venta</th>
+              <th>Precio ($)</th>
+              <th>Sabores / Variedades</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for it in catalogo %}
+              <tr id="plato-row-{{ it.id }}" data-dias="{{ (it.dias or ['Todos']) | join(',') }}">
+                <td>#{{ it.id }}</td>
+                <td>
+                  {% if it.foto %}
+                    <img src="{{ it.foto }}" alt="{{ it.nombre }}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--gray-200);">
+                  {% else %}
+                    <div style="width: 44px; height: 44px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🍲</div>
+                  {% endif %}
+                </td>
+                <td>
+                  <b>{{ it.nombre }}</b>
+                  {% if it.descripcion %}
+                    <div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 2px;">{{ it.descripcion }}</div>
+                  {% endif %}
+                </td>
+                <td>
+                  {% set dias_list = it.dias or ['Todos'] %}
+                  {% if 'Todos' in dias_list %}
+                    <span style="background: #ecfdf5; color: #047857; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; border: 1px solid #a7f3d0; white-space: nowrap;">⭐ Todos los días</span>
+                  {% else %}
+                    <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; border: 1px solid #bfdbfe; white-space: nowrap;">📅 {{ dias_list | join(', ') }}</span>
+                  {% endif %}
+                </td>
+                <td><b style="color: var(--accent); font-size: 1rem;">${{ "{:,.0f}".format(it.precio) }}</b></td>
+                <td style="font-size: 0.84rem; color: var(--gray-600);">
+                  {% if it.sabores %}
+                    <span style="background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-size: 0.78rem; color: #334155; display: inline-block;">
+                      {{ it.sabores | join(', ') }}
+                    </span>
+                  {% else %}
+                    <span style="color: var(--gray-400);">-</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-sm btn-edit" onclick='editarPlato({{ it | tojson }})'>✏️ Editar</button>
+                    <button type="button" class="btn-sm btn-del" onclick="eliminarPlato({{ it.id }}, '{{ it.nombre }}')">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: CLIENTES GUARDADOS -->
+    <section id="secUsuarios" style="display: none;">
+      <div class="table-card">
+        {% if usuarios %}
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>WhatsApp</th>
+                <th>Total Pedidos</th>
+                <th>Última Actividad</th>
+                <th>Contacto</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in usuarios %}
+                <tr>
+                  <td>#{{ u.id }}</td>
+                  <td><b>{{ u.nombre }}</b></td>
+                  <td>
+                    {% if u.whatsapp %}
+                      {% set wa_u = u.whatsapp | replace(' ', '') | replace('-', '') | replace('+', '') %}
+                      <a href="https://wa.me/{{ wa_u }}" target="_blank" class="btn-wa">
+                        💬 {{ u.whatsapp }}
+                      </a>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td><b>{{ u.pedidos_count }}</b> pedido(s)</td>
+                  <td style="color: var(--gray-600); font-size: 0.82rem;">{{ u.ultimo_acceso }}</td>
+                  <td>
+                    {% if u.whatsapp %}
+                      {% set wa_u = u.whatsapp | replace(' ', '') | replace('-', '') | replace('+', '') %}
+                      <a href="https://wa.me/{{ wa_u }}?text=Hola%20{{ u.nombre }}!%20Te%20paso%20el%20menú%20de%20viandas%20para%20la%20semana" target="_blank" class="btn-wa" style="background: #0f766e;">
+                        Enviar Menú
+                      </a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="empty-state">Aún no hay clientes con perfil guardado.</div>
+        {% endif %}
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Modal Agregar / Editar Plato -->
+  <div class="modal-overlay" id="modalPlato">
+    <div class="modal-card">
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--dark); margin-bottom: 14px;" id="modalPlatoTitulo">
+        ➕ Agregar Plato al Menú
+      </h3>
+      <form id="formPlato" onsubmit="guardarPlato(event)" enctype="multipart/form-data">
+        <input type="hidden" id="platoId" name="id">
+        <div class="form-group">
+          <label for="platoNombre">Nombre de la Vianda / Comida *</label>
+          <input type="text" id="platoNombre" name="nombre" placeholder="Ej: Pastel de Papa" required>
+        </div>
+        <div class="form-group">
+          <label for="platoDia">Día de Disponibilidad *</label>
+          <select id="platoDia" name="dia" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--gray-200); font-size: 0.95rem; font-family: inherit;">
+            <option value="Todos">⭐ Todos los días (Plato Fijo / Permanente)</option>
+            <option value="Lunes">📅 Lunes (Menú del día)</option>
+            <option value="Martes">📅 Martes (Menú del día)</option>
+            <option value="Miércoles">📅 Miércoles (Menú del día)</option>
+            <option value="Jueves">📅 Jueves (Menú del día)</option>
+            <option value="Viernes">📅 Viernes (Menú del día)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="platoPrecio">Precio ($) *</label>
+          <input type="number" id="platoPrecio" name="precio" placeholder="Ej: 1500" step="50" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="platoSabores">Sabores o Variedades a elección (opcional, separados por coma)</label>
+          <input type="text" id="platoSabores" name="sabores" placeholder="Ej: Carne, Verdura, Jamón y Queso">
+          <small style="color: var(--gray-600); font-size: 0.78rem;">Al cliente se le abrirá un selector de sabores para elegir exactamente sus gustos.</small>
+        </div>
+        <div class="form-group">
+          <label for="platoDescripcion">Descripción o aclaración corta (opcional)</label>
+          <input type="text" id="platoDescripcion" name="descripcion" placeholder="Ej: Bandeja de 3 empanadas a elección">
+        </div>
+        <div class="form-group">
+          <label for="platoAliases">Palabras clave / Alias (separados por coma)</label>
+          <input type="text" id="platoAliases" name="aliases" placeholder="Ej: pastel de papa, pastel, pastel de carne">
+        </div>
+        <div class="form-group">
+          <label for="platoFotoArchivo">Subir Foto del Plato (desde el celu o compu)</label>
+          <input type="file" id="platoFotoArchivo" name="foto_archivo" accept="image/*" onchange="previewFotoLocal(event)">
+        </div>
+        <div class="form-group">
+          <label for="platoFotoUrl">O enlace web de foto (opcional)</label>
+          <input type="url" id="platoFotoUrl" name="foto_url" placeholder="https://ejemplo.com/foto.jpg" oninput="previewFotoUrl(this.value)">
+        </div>
+        <div id="fotoPreviewContainer" style="display: none; margin-bottom: 14px; text-align: center;">
+          <label style="font-size: 0.8rem; color: var(--gray-600); display: block; margin-bottom: 4px;">Vista previa de la foto:</label>
+          <img id="imgPreview" src="" alt="Vista previa" style="max-height: 120px; border-radius: 10px; border: 1.5px solid var(--gray-200); object-fit: cover;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <button type="submit" class="btn btn-accent" style="flex: 1; justify-content: center;" id="btnGuardarPlato">
+            Guardar Plato
+          </button>
+          <button type="button" class="btn btn-light" style="border: 1px solid var(--gray-200);" onclick="cerrarModalPlato()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function mostrarSeccion(sec, btn) {
+      document.querySelectorAll(".v-tab").forEach(t => t.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      try { sessionStorage.setItem("cocina_tab", sec); } catch(e) {}
+
+      document.getElementById("secCocina").style.display = (sec === 'cocina') ? 'block' : 'none';
+      document.getElementById("secPedidos").style.display = (sec === 'pedidos') ? 'block' : 'none';
+      document.getElementById("secPrecios").style.display = (sec === 'precios') ? 'block' : 'none';
+      document.getElementById("secUsuarios").style.display = (sec === 'usuarios') ? 'block' : 'none';
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      try {
+        const savedTab = sessionStorage.getItem("cocina_tab");
+        if (savedTab) {
+          const tabBtn = Array.from(document.querySelectorAll(".v-tab")).find(b => b.getAttribute("onclick") && b.getAttribute("onclick").includes(savedTab));
+          if (tabBtn) mostrarSeccion(savedTab, tabBtn);
+        }
+      } catch(e) {}
+
+      // Ordenar pedidos por día de la semana por defecto
+      try {
+        ordenarTablaPedidos("dia_asc");
+      } catch(e) {}
+    });
+
+    const MAPA_DIAS_ORDEN = {
+      "lunes": 1,
+      "martes": 2,
+      "miercoles": 3,
+      "miércoles": 3,
+      "jueves": 4,
+      "viernes": 5,
+      "sabado": 6,
+      "sábado": 6,
+      "domingo": 7
+    };
+
+    let filtroPagoPedidos = "todos";
+    let filtroDiaPedidos = "todos";
+    let ordenActualPedidos = "dia_asc";
+    let sortDiaDireccion = "asc";
+    let sortIdDireccion = "desc";
+
+    function filtrarPagoPedidos(filtro, btn) {
+      filtroPagoPedidos = filtro;
+      document.querySelectorAll(".btn-pago-pill").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      reaplicarFiltrosPedidos();
+    }
+
+    function filtrarDiaListaPedidos(dia, btn) {
+      filtroDiaPedidos = dia;
+      document.querySelectorAll(".btn-dia-pedido-pill").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      reaplicarFiltrosPedidos();
+    }
+
+    function reaplicarFiltrosPedidos() {
+      document.querySelectorAll("#secPedidos tbody tr").forEach(row => {
+        const pagado = row.getAttribute("data-pagado") === "1";
+        const dia = (row.getAttribute("data-dia") || "").toLowerCase().trim();
+
+        let pasaPago = true;
+        if (filtroPagoPedidos === "pendientes") pasaPago = !pagado;
+        else if (filtroPagoPedidos === "pagados") pasaPago = pagado;
+
+        let pasaDia = true;
+        if (filtroDiaPedidos !== "todos") {
+          pasaDia = (dia === filtroDiaPedidos.toLowerCase().trim());
+        }
+
+        row.style.display = (pasaPago && pasaDia) ? "" : "none";
+      });
+    }
+
+    function ordenarTablaPedidos(criterio) {
+      ordenActualPedidos = criterio;
+      const tbody = document.querySelector("#secPedidos tbody");
+      if (!tbody) return;
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+
+      rows.sort((a, b) => {
+        if (criterio === "dia_asc" || criterio === "dia_desc") {
+          const diaA = (a.getAttribute("data-dia") || "").toLowerCase().trim();
+          const diaB = (b.getAttribute("data-dia") || "").toLowerCase().trim();
+          const numA = MAPA_DIAS_ORDEN[diaA] || 99;
+          const numB = MAPA_DIAS_ORDEN[diaB] || 99;
+          if (numA !== numB) {
+            return criterio === "dia_asc" ? numA - numB : numB - numA;
+          }
+          return parseInt(b.getAttribute("data-id") || 0) - parseInt(a.getAttribute("data-id") || 0);
+        } else if (criterio === "id_desc") {
+          return parseInt(b.getAttribute("data-id") || 0) - parseInt(a.getAttribute("data-id") || 0);
+        } else if (criterio === "id_asc") {
+          return parseInt(a.getAttribute("data-id") || 0) - parseInt(b.getAttribute("data-id") || 0);
+        } else if (criterio === "cliente") {
+          const cliA = (a.getAttribute("data-cliente") || "").toLowerCase();
+          const cliB = (b.getAttribute("data-cliente") || "").toLowerCase();
+          return cliA.localeCompare(cliB);
+        }
+        return 0;
+      });
+
+      rows.forEach(r => tbody.appendChild(r));
+    }
+
+    function cambiarOrdenPedidos(valor) {
+      ordenarTablaPedidos(valor);
+      const iconDia = document.getElementById("iconSortDia");
+      if (iconDia) {
+        if (valor === "dia_asc") iconDia.textContent = "🔼 (Lun-Vie)";
+        else if (valor === "dia_desc") iconDia.textContent = "🔽 (Vie-Lun)";
+        else iconDia.textContent = "↕️";
+      }
+    }
+
+    function alternarOrdenDia() {
+      sortDiaDireccion = (sortDiaDireccion === "asc") ? "desc" : "asc";
+      const nuevoOrden = sortDiaDireccion === "asc" ? "dia_asc" : "dia_desc";
+      const select = document.getElementById("selectOrdenPedidos");
+      if (select) select.value = nuevoOrden;
+      cambiarOrdenPedidos(nuevoOrden);
+    }
+
+    function alternarOrdenId() {
+      sortIdDireccion = (sortIdDireccion === "desc") ? "asc" : "desc";
+      const nuevoOrden = sortIdDireccion === "desc" ? "id_desc" : "id_asc";
+      const select = document.getElementById("selectOrdenPedidos");
+      if (select) select.value = nuevoOrden;
+      cambiarOrdenPedidos(nuevoOrden);
+    }
+
+    function alternarOrdenCliente() {
+      const select = document.getElementById("selectOrdenPedidos");
+      if (select) select.value = "cliente";
+      cambiarOrdenPedidos("cliente");
+    }
+
+    function reaplicarFiltroPedidos() {
+      reaplicarFiltrosPedidos();
+    }
+
+    async function anotarPago(id, btn) {
+      const yaPagado = btn.getAttribute("data-pagado") === "1";
+      const cliente = btn.getAttribute("data-cliente") || "Cliente";
+      
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
+
+      try {
+        const resp = await fetch("/api/pedido/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id, tipo: "pago" })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          const p = data.pedido;
+          const ahoraPagado = p.pagado;
+          btn.setAttribute("data-pagado", ahoraPagado ? "1" : "0");
+          const row = document.getElementById("row-" + id);
+          if (row) row.setAttribute("data-pagado", ahoraPagado ? "1" : "0");
+
+          if (ahoraPagado) {
+            btn.className = "btn-pago-toggle pago-si";
+            btn.innerHTML = "✅ Pagado";
+            mostrarToastCocina(`✅ ¡Pedido #${id} (${cliente}) anotado como PAGADO! Al cliente ya le dice "Pago confirmado".`);
+          } else {
+            btn.className = "btn-pago-toggle pago-no";
+            btn.innerHTML = "⏳ Marcar Pagado";
+            mostrarToastCocina(`⏳ Pedido #${id} (${cliente}) vuelto a Pendiente de Pago.`);
+          }
+
+          reaplicarFiltroPedidos();
+
+          // Actualizar métricas en tiempo real
+          if (data.total_pagado !== undefined && data.total_pendiente !== undefined) {
+            const elCobrado = document.getElementById("metricaCobrado");
+            const elPendiente = document.getElementById("metricaPendiente");
+            if (elCobrado) elCobrado.textContent = "$" + Math.round(data.total_pagado).toLocaleString("es-AR");
+            if (elPendiente) elPendiente.textContent = "$" + Math.round(data.total_pendiente).toLocaleString("es-AR");
+          }
+        } else {
+          alert("Error: " + (data.error || "No se pudo actualizar el pago"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión al actualizar el pago");
+      } finally {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+      }
+    }
+
+    function mostrarToastCocina(msg) {
+      let toast = document.getElementById("toastCocina");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toastCocina";
+        toast.style.position = "fixed";
+        toast.style.bottom = "24px";
+        toast.style.right = "24px";
+        toast.style.background = "#0f172a";
+        toast.style.color = "#ffffff";
+        toast.style.padding = "12px 20px";
+        toast.style.borderRadius = "12px";
+        toast.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
+        toast.style.fontWeight = "700";
+        toast.style.fontSize = "0.88rem";
+        toast.style.zIndex = "99999";
+        toast.style.transition = "all 0.3s ease";
+        toast.style.display = "flex";
+        toast.style.alignItems = "center";
+        toast.style.gap = "8px";
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = msg;
+      toast.style.opacity = "1";
+      toast.style.transform = "translateY(0)";
+      clearTimeout(toast.timeout);
+      toast.timeout = setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(10px)";
+      }, 4000);
+    }
+
+    async function guardarConfig(e) {
+      e.preventDefault();
+      const modo = document.getElementById("cfgModo").value;
+      const wa = document.getElementById("cfgWa").value.trim();
+      const aliasMp = document.getElementById("cfgAliasMp").value.trim();
+      const linkMp = document.getElementById("cfgLinkMp") ? document.getElementById("cfgLinkMp").value.trim() : "";
+      const btn = document.getElementById("btnGuardarCfg");
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+
+      try {
+        const resp = await fetch("/api/config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            modo_pedidos: modo,
+            whatsapp_mama: wa,
+            alias_mercadopago: aliasMp,
+            link_pago_mp: linkMp
+          })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          window.location.reload();
+        } else {
+          alert("Error al guardar configuración");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "💾 Guardar";
+      }
+    }
+
+    async function toggleEstado(id, tipo) {
+      try {
+        const resp = await fetch("/api/pedido/toggle", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id, tipo: tipo })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          window.location.reload();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function eliminarPedidoCocina(id, cliente, plato) {
+      if (!confirm(`¿Estás segura de eliminar el pedido #${id} de ${cliente} (${plato})?`)) return;
+      try {
+        const resp = await fetch("/api/pedido/cancelar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pedido_id: id, admin: true })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          window.location.reload();
+        } else {
+          alert("Error: " + (data.error || "No se pudo eliminar el pedido"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión");
+      }
+    }
+
+    function previewFotoLocal(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const container = document.getElementById("fotoPreviewContainer");
+        const img = document.getElementById("imgPreview");
+        img.src = URL.createObjectURL(file);
+        container.style.display = "block";
+      }
+    }
+
+    function previewFotoUrl(url) {
+      const container = document.getElementById("fotoPreviewContainer");
+      const img = document.getElementById("imgPreview");
+      if (url && url.startsWith("http")) {
+        img.src = url;
+        container.style.display = "block";
+      } else if (!document.getElementById("platoFotoArchivo").files.length) {
+        container.style.display = "none";
+      }
+    }
+
+    let filtroActualPlatos = "todos";
+
+    function filtrarPlatosPorDia(dia, btn) {
+      filtroActualPlatos = dia;
+      document.querySelectorAll(".btn-dia-pill").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+
+      const btnNuevo = document.getElementById("btnNuevoPlatoDia");
+      if (btnNuevo) {
+        if (dia === "todos" || dia === "Todos") {
+          btnNuevo.textContent = "➕ Agregar Plato";
+        } else {
+          btnNuevo.textContent = `➕ Agregar Plato para ${dia}`;
+        }
+      }
+
+      document.querySelectorAll("#secPrecios tbody tr").forEach(row => {
+        const diasStr = row.getAttribute("data-dias") || "Todos";
+        const diasArr = diasStr.split(",").map(d => d.trim().toLowerCase());
+        if (dia === "todos") {
+          row.style.display = "";
+        } else if (dia === "Todos") {
+          row.style.display = diasArr.includes("todos") ? "" : "none";
+        } else {
+          row.style.display = diasArr.includes(dia.toLowerCase()) ? "" : "none";
+        }
+      });
+    }
+
+    function abrirModalPlato(diaForzado) {
+      document.getElementById("modalPlatoTitulo").textContent = "➕ Agregar Plato al Menú";
+      document.getElementById("platoId").value = "";
+      document.getElementById("platoNombre").value = "";
+      
+      const diaSelect = document.getElementById("platoDia");
+      if (diaSelect) {
+        if (diaForzado) {
+          diaSelect.value = diaForzado;
+        } else if (filtroActualPlatos !== "todos") {
+          diaSelect.value = filtroActualPlatos;
+        } else {
+          diaSelect.value = "Todos";
+        }
+      }
+
+      document.getElementById("platoPrecio").value = "";
+      const sabInput = document.getElementById("platoSabores");
+      if (sabInput) sabInput.value = "";
+      const descInput = document.getElementById("platoDescripcion");
+      if (descInput) descInput.value = "";
+      document.getElementById("platoAliases").value = "";
+      document.getElementById("platoFotoArchivo").value = "";
+      document.getElementById("platoFotoUrl").value = "";
+      document.getElementById("fotoPreviewContainer").style.display = "none";
+      document.getElementById("modalPlato").classList.add("active");
+    }
+
+    function editarPlato(item) {
+      document.getElementById("modalPlatoTitulo").textContent = "✏️ Editar Plato #" + item.id;
+      document.getElementById("platoId").value = item.id;
+      document.getElementById("platoNombre").value = item.nombre;
+      
+      const diaSelect = document.getElementById("platoDia");
+      if (diaSelect) {
+        const diaItem = (item.dias && item.dias.length > 0) ? item.dias[0] : "Todos";
+        diaSelect.value = diaItem;
+      }
+
+      document.getElementById("platoPrecio").value = item.precio;
+      const sabInput = document.getElementById("platoSabores");
+      if (sabInput) sabInput.value = (item.sabores || []).join(", ");
+      const descInput = document.getElementById("platoDescripcion");
+      if (descInput) descInput.value = item.descripcion || "";
+
+      document.getElementById("platoAliases").value = (item.aliases || []).join(", ");
+      document.getElementById("platoFotoArchivo").value = "";
+      document.getElementById("platoFotoUrl").value = item.foto || "";
+      if (item.foto) {
+        document.getElementById("imgPreview").src = item.foto;
+        document.getElementById("fotoPreviewContainer").style.display = "block";
+      } else {
+        document.getElementById("fotoPreviewContainer").style.display = "none";
+      }
+      document.getElementById("modalPlato").classList.add("active");
+    }
+
+    function cerrarModalPlato() {
+      document.getElementById("modalPlato").classList.remove("active");
+    }
+
+    async function guardarPlato(e) {
+      e.preventDefault();
+      const form = document.getElementById("formPlato");
+      const formData = new FormData(form);
+      const btn = document.getElementById("btnGuardarPlato");
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+
+      try {
+        const resp = await fetch("/api/menu/guardar", {
+          method: "POST",
+          body: formData
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          window.location.reload();
+        } else {
+          alert("Error: " + (data.error || "No se pudo guardar el plato"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión al guardar plato.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar Plato";
+      }
+    }
+
+    async function eliminarPlato(id, nombre) {
+      if (!confirm(`¿Estás segura de eliminar '${nombre}' del menú?`)) return;
+      try {
+        const resp = await fetch("/api/menu/eliminar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          window.location.reload();
+        } else {
+          alert("Error al eliminar plato.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>

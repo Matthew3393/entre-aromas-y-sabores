@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entre Aromas y Sabores - Pedidos Semanales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ea580c;
+      --primary-hover: #c2410c;
+      --primary-light: #ffedd5;
+      --dark: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --green: #16a34a;
+      --radius: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fdfaf6;
+      color: var(--gray-800);
+      line-height: 1.5;
+      padding-bottom: 120px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #ea580c, #c2410c);
+      color: white;
+      padding: 32px 20px 28px;
+      text-align: center;
+      border-bottom-left-radius: 28px;
+      border-bottom-right-radius: 28px;
+      box-shadow: 0 10px 25px rgba(234, 88, 12, 0.25);
+    }
+
+    .badge-semana {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: -16px auto 0;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-100);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid var(--gray-200);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #fafafa;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+    }
+
+    /* Tabs de Días */
+    .day-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+      margin-bottom: 16px;
+    }
+    .day-tabs::-webkit-scrollbar { display: none; }
+
+    .day-tab {
+      flex: 1;
+      min-width: 82px;
+      padding: 10px 8px;
+      border-radius: 12px;
+      background: var(--gray-100);
+      border: 2px solid transparent;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .day-tab.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .day-tab .badge-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Platos */
+    .dish-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .dish-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .dish-info {
+      flex: 1;
+      padding-right: 12px;
+    }
+
+    .dish-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--dark);
+      margin-bottom: 2px;
+    }
+
+    .menu-category-header {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin: 16px 0 8px;
+      padding-bottom: 5px;
+      border-bottom: 1.5px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .menu-category-header:first-child {
+      margin-top: 0;
+    }
+
+    .dish-expandable {
+      display: block;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .dish-expandable-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dish-subtitle {
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-selection {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge-selection-incomplete {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .sabores-drawer {
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 14px;
+      padding: 12px 14px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .sabor-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .sabor-row:last-child {
+      border-bottom: none;
+    }
+
+    .sabor-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--dark);
+      flex: 1;
+      padding-right: 10px;
+      line-height: 1.35;
+    }
+
+    .dish-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-right: 12px;
+      flex-shrink: 0;
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dish-placeholder {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: #ffedd5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .btn-mis-pedidos {
+      background: rgba(255, 255, 255, 0.22);
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      backdrop-filter: blur(8px);
+      transition: all 0.15s ease;
+    }
+
+    .btn-mis-pedidos:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Carteles de Horario y Disponibilidad */
+    .schedule-banner {
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .schedule-open {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      color: #14532d;
+    }
+
+    .schedule-closed {
+      background: #fef2f2;
+      border: 1.5px solid #fca5a5;
+      color: #7f1d1d;
+    }
+
+    .schedule-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .schedule-content {
+      flex: 1;
+    }
+
+    .schedule-title {
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+
+    .schedule-desc {
+      font-size: 0.85rem;
+      opacity: 0.95;
+      line-height: 1.45;
+    }
+
+    .btn-wa-direct {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      transition: background 0.15s ease;
+    }
+
+    .btn-wa-direct:hover {
+      background: #1ebc59;
+    }
+
+    .order-history-card {
+      background: white;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .order-history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      border-bottom: 1px dashed var(--gray-200);
+      padding-bottom: 6px;
+    }
+
+    .time-badge-ok {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .time-badge-expired {
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-cancelar {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      width: 100%;
+      transition: background 0.15s ease;
+    }
+
+    .btn-cancelar:hover { background: #fecaca; }
+
+    .btn-wa-help {
+      background: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .dish-price {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    /* Contador de Cantidad */
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      background: var(--gray-100);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 8px;
+    }
+
+    .counter button {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      color: var(--dark);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .counter button:active {
+      transform: scale(0.92);
+      background: var(--primary);
+      color: white;
+    }
+
+    .counter .count-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Barra inferior fija */
+    .footer-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 14px 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 640px;
+      margin: 0 auto;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      z-index: 100;
+      border: 1px solid var(--gray-200);
+      border-bottom: none;
+    }
+
+    .footer-summary {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-summary span {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .footer-summary strong {
+      font-size: 1.35rem;
+      color: var(--dark);
+      font-weight: 800;
+    }
+
+    .btn-submit {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-submit:disabled {
+      background: var(--gray-200);
+      color: var(--gray-600);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Modal / Pantalla de éxito */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 24px;
+      padding: 28px 24px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: #dcfce7;
+      color: #16a34a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 16px;
+    }
+
+    .modal-card h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+
+    .order-summary-box {
+      background: var(--gray-50);
+      border-radius: 14px;
+      padding: 14px;
+      margin: 16px 0;
+      text-align: left;
+      font-size: 0.9rem;
+      border: 1px solid var(--gray-200);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--dark);
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    /* Tarjeta de Pago Mercado Pago */
+    .mp-payment-card {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 1.5px solid #7dd3fc;
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin: 14px 0 14px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 158, 227, 0.08);
+    }
+    .mp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #009ee3;
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      margin-bottom: 10px;
+    }
+    .mp-amount-row {
+      margin-bottom: 12px;
+    }
+    .mp-amount-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #0369a1;
+      margin-bottom: 2px;
+    }
+    .mp-amount-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .mp-alias-container {
+      background: white;
+      border: 1.5px dashed #0284c7;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .mp-alias-sub {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    .mp-alias-display {
+      font-size: 1.2rem;
+      font-family: monospace;
+      color: #0284c7;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .btn-mp-copy {
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      color: #0369a1;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-mp-copy:hover {
+      background: #bae6fd;
+    }
+    .mp-actions-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn-mp-primary {
+      background: #009ee3;
+      color: white;
+      text-decoration: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.94rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0, 158, 227, 0.35);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-mp-primary:hover {
+      background: #0081ba;
+    }
+    .btn-wa-comprobante {
+      background: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-wa-comprobante:hover {
+      background: #1ebc59;
+    }
+
+    /* Tarjeta de usuario recordado */
+    .user-welcome-card {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 1.5px solid #86efac;
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .user-welcome-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .user-welcome-title {
+      font-weight: 800;
+      font-size: 0.98rem;
+      color: #14532d;
+    }
+
+    .user-welcome-sub {
+      font-size: 0.82rem;
+      color: #166534;
+      font-weight: 500;
+    }
+
+    .btn-change-user {
+      background: white;
+      border: 1.5px solid #86efac;
+      color: #166534;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .btn-change-user:hover {
+      background: #f0fdf4;
+      border-color: #4ade80;
+    }
+
+    .checkbox-save {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 0.84rem;
+      color: var(--gray-800);
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+      background: var(--gray-50);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px dashed var(--gray-200);
+    }
+
+    .checkbox-save input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .card-pago-confirmado {
+      background: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .badge-status-pago {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+    .badge-status-pago.pago-si {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .badge-status-pago.pago-no {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-semana">✨ Pedidos para la próxima semana</div>
+    <h1>Entre Aromas y Sabores</h1>
+    <p>Comida fresca, rica y hecha como en casa. Elegí qué querés comer de Lunes a Viernes.</p>
+    <button type="button" class="btn-mis-pedidos" onclick="abrirMisPedidos()">
+      📜 Mis Pedidos <span id="badgeMisPedidos" style="display:none; background:white; color:var(--primary); font-size:0.75rem; padding:1px 6px; border-radius:999px; font-weight:800; margin-left:4px;">0</span>
+    </button>
+  </header>
+
+  <main class="container">
+
+    <!-- Cartel de Horario de Pedidos -->
+    {% if pedidos_abiertos %}
+      <div class="schedule-banner schedule-open">
+        <div class="schedule-icon">⏰</div>
+        <div class="schedule-content">
+          <div class="schedule-title">Pedidos abiertos para la próxima semana</div>
+          <div class="schedule-desc">
+            {{ mensaje_horario }}. Podés elegir o modificar tus viandas de Lunes a Viernes hasta el <strong>Miércoles a las 12 PM</strong>.
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="schedule-banner schedule-closed">
+        <div class="schedule-icon">🔒</div>
+        <div class="schedule-content">
+          <div class="schedule-title">Pedidos cerrados por esta semana</div>
+          <div class="schedule-desc">
+            {{ mensaje_horario }}
+            <br>La cocina ya se encuentra preparando los pedidos. La página se vuelve a habilitar para la siguiente semana el próximo <strong>Lunes</strong>.
+          </div>
+          {% if whatsapp_mama %}
+            {% set wa_clean = whatsapp_mama | replace(' ', '') | replace('-', '') | replace('+', '') %}
+            <div>
+              <a href="https://wa.me/{{ wa_clean }}?text=¡Hola!%20Te%20escribo%20por%20una%20consulta%20sobre%20las%20viandas" target="_blank" class="btn-wa-direct">
+                💬 Consultar por WhatsApp
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Tarjeta de bienvenida si ya fue recordado -->
+    <div class="user-welcome-card" id="userWelcomeCard" style="display: none;">
+      <div class="user-welcome-info">
+        <div class="user-avatar">👋</div>
+        <div>
+          <div class="user-welcome-title">¡Hola de nuevo, <span id="displayUserName"></span>!</div>
+          <div class="user-welcome-sub">WhatsApp: <span id="displayUserWa"></span></div>
+        </div>
+      </div>
+      <button type="button" class="btn-change-user" onclick="cambiarUsuario()">Cambiar datos</button>
+    </div>
+
+    <!-- Paso 1: Datos del Cliente (se oculta automáticamente si el usuario ya está recordado) -->
+    <section class="card" id="cardDatosCliente">
+      <div class="card-title">👤 Tus Datos</div>
+      <div class="form-group">
+        <label for="clienteNombre">Nombre y Apellido *</label>
+        <input type="text" id="clienteNombre" placeholder="Ej: Tu Nombre y Apellido" required>
+      </div>
+      <div class="form-group">
+        <label for="clienteWhatsapp">Número de WhatsApp *</label>
+        <input type="tel" id="clienteWhatsapp" placeholder="Ej: 11 2345 6789" required>
+      </div>
+      <label class="checkbox-save">
+        <input type="checkbox" id="checkRecordar" checked>
+        <span>Guardar mis datos en este teléfono (así la próxima vez pedís con 1 solo clic)</span>
+      </label>
+    </section>
+
+    <!-- Paso 2: Menú por Día -->
+    <section class="card">
+      <div class="card-title">📅 Elegí tu menú de la semana</div>
+      <p style="font-size: 0.85rem; color: var(--gray-600); margin-bottom: 12px;">
+        Tocá cada día para indicar qué vianda querés recibir:
+      </p>
+
+      <div class="day-tabs" id="dayTabs">
+        <button type="button" class="day-tab active" data-dia="Lunes">Lunes</button>
+        <button type="button" class="day-tab" data-dia="Martes">Martes</button>
+        <button type="button" class="day-tab" data-dia="Miércoles">Miércoles</button>
+        <button type="button" class="day-tab" data-dia="Jueves">Jueves</button>
+        <button type="button" class="day-tab" data-dia="Viernes">Viernes</button>
+      </div>
+
+      <div id="dishesContainer">
+        <!-- Renderizado dinámico vía JS según el día seleccionado -->
+      </div>
+    </section>
+
+    <!-- Paso 3: Aclaraciones -->
+    <section class="card">
+      <div class="card-title">📝 Aclaraciones u Observaciones</div>
+      <div class="form-group">
+        <textarea id="clienteNotas" rows="2" placeholder="Ej: Gustos de empanadas o tarta, dirección de entrega, sin sal, etc..."></textarea>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Barra Flotante Inferior -->
+  <div class="footer-bar">
+    <div class="footer-summary">
+      <span id="labelTotalItems">0 viandas seleccionadas</span>
+      <strong id="labelTotalPrice">$0.00</strong>
+    </div>
+    <button type="button" class="btn-submit" id="btnConfirmar" disabled>
+      Confirmar Pedido
+    </button>
+  </div>
+
+  <!-- Modal Confirmación y Pago Mercado Pago -->
+  <div class="modal-overlay" id="modalExito">
+    <div class="modal-card" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-icon">✓</div>
+      <h2>¡Pedido Recibido!</h2>
+      <p style="font-size: 0.88rem; color: var(--gray-600); margin-bottom: 12px;">
+        Tu pedido para la próxima semana ya quedó registrado. Para confirmarlo realizá el pago por Mercado Pago:
+      </p>
+
+      <!-- Banner Dinámico de Pago Confirmado -->
+      <div id="modalExitoConfirmado" style="display: none; background: #ecfdf5; border: 2px solid #10b981; border-radius: 14px; padding: 16px; margin-bottom: 14px; text-align: center;">
+        <div style="font-size: 2.2rem; margin-bottom: 4px;">🎉</div>
+        <h3 style="color: #065f46; margin: 0 0 4px 0; font-size: 1.15rem; font-weight: 800;">¡Pago Confirmado!</h3>
+        <p style="color: #047857; margin: 0; font-size: 0.88rem; line-height: 1.4;">
+          El pago fue recibido y confirmado con éxito. Tu pedido para la próxima semana ya está 100% confirmado. ¡Muchas gracias por tu compra!
+        </p>
+      </div>
+
+      <!-- Tarjeta de Pago Mercado Pago -->
+      <div class="mp-payment-card" id="cardMercadoPagoExito">
+        <div class="mp-badge">
+          <span>💳 Pago por Mercado Pago</span>
+        </div>
+        
+        <div class="mp-amount-row">
+          <span class="mp-amount-label">Monto total a transferir:</span>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 2px;">
+            <span class="mp-amount-val" id="modalMpMonto">$0</span>
+            <button type="button" class="btn-mp-copy" id="btnCopiarMonto" style="padding: 4px 10px; font-size: 0.75rem;" onclick="copiarMontoModal()">
+              📋 Copiar Monto
+            </button>
+          </div>
+        </div>
+
+        <div class="mp-alias-container">
+          <div class="mp-alias-sub">Alias de Mercado Pago:</div>
+          <div class="mp-alias-display">
+            <strong id="modalMpAliasTexto">{{ alias_mercadopago }}</strong>
+          </div>
+          <button type="button" class="btn-mp-copy" id="btnCopiarAliasModal" onclick="copiarAlias(aliasMercadoPago)">
+            📋 Copiar Alias
+          </button>
+        </div>
+
+        <!-- Pasos rápidos explicados para el cliente -->
+        <div style="background: white; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: left; font-size: 0.82rem; color: var(--gray-800); border: 1px solid var(--gray-200); line-height: 1.55;">
+          <div style="font-weight: 800; color: #0369a1; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+            <span>ℹ️</span> ¿Cómo transferir?
+          </div>
+          <div>1. Tocá <b>Copiar Alias</b> (ya queda copiado en tu teléfono).</div>
+          <div>2. Abrí <b>Mercado Pago</b> (o tu banco) y elegí <b>Transferir</b>.</div>
+          <div>3. Pegá el alias <b>{{ alias_mercadopago }}</b> e ingresá el monto exacto.</div>
+          <div>4. Enviá el comprobante por WhatsApp tocando el botón verde.</div>
+        </div>
+
+        <div class="mp-actions-stack">
+          <button type="button" class="btn-mp-primary" id="btnAbrirMp" onclick="abrirMercadoPagoApp()">
+            🚀 Abrir Mercado Pago para Transferir
+          </button>
+          <a href="#" target="_blank" class="btn-wa-comprobante" id="btnEnviarComprobanteWa">
+            💬 Enviar comprobante por WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <details style="margin-top: 10px; text-align: left; font-size: 0.85rem; border: 1px solid var(--gray-200); border-radius: 12px; padding: 8px 12px;">
+        <summary style="cursor: pointer; font-weight: 700; color: var(--gray-600);">📋 Ver detalle de viandas pedidas</summary>
+        <div class="order-summary-box" id="resumenModalDetalle" style="margin: 8px 0 0 0; background: transparent; border: none; padding: 0;"></div>
+      </details>
+
+      <button type="button" class="btn-secondary" style="width: 100%; justify-content: center; margin-top: 14px;" id="btnCerrarModal">
+        Hacer otro pedido / Cerrar
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Historial y Modificación de Pedidos -->
+  <div class="modal-overlay" id="modalMisPedidos">
+    <div class="modal-card" style="max-height: 85vh; display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--dark); margin: 0;">📜 Mis Pedidos Realizados</h2>
+        <button type="button" onclick="cerrarMisPedidos()" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--gray-600); padding: 4px;">✕</button>
+      </div>
+      <div style="overflow-y: auto; flex: 1; padding-right: 4px;" id="misPedidosLista">
+        <p style="color: var(--gray-600); font-size: 0.9rem;">Cargando pedidos...</p>
+      </div>
+      <button type="button" class="btn-secondary" onclick="cerrarMisPedidos()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Catálogo de platos cargado desde el servidor
+    const menuItems = {{ menu | tojson }};
+    const usuarioServidor = {{ usuario_actual | tojson if usuario_actual else 'null' }};
+    const pedidosAbiertos = {{ 'true' if pedidos_abiertos else 'false' }};
+    const whatsappMama = {{ (whatsapp_mama or '') | tojson }};
+    const aliasMercadoPago = {{ (alias_mercadopago or 'julia.rabovich') | tojson }};
+    const linkPagoMp = {{ (link_pago_mp or '') | tojson }};
+
+    // Estructura de pedidos del cliente por día:
+    const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+    const orden = {};
+    const empanadasState = {};
+    const drawerOpenState = {};
+    dias.forEach(d => { 
+      orden[d] = {}; 
+      empanadasState[d] = {};
+      drawerOpenState[d] = {};
+    });
+
+    let diaActual = "Lunes";
+
+    const dayTabs = document.querySelectorAll(".day-tab");
+    const dishesContainer = document.getElementById("dishesContainer");
+    const labelTotalItems = document.getElementById("labelTotalItems");
+    const labelTotalPrice = document.getElementById("labelTotalPrice");
+    const btnConfirmar = document.getElementById("btnConfirmar");
+    const modalExito = document.getElementById("modalExito");
+    const resumenModalDetalle = document.getElementById("resumenModalDetalle");
+    const btnCerrarModal = document.getElementById("btnCerrarModal");
+
+    const userWelcomeCard = document.getElementById("userWelcomeCard");
+    const cardDatosCliente = document.getElementById("cardDatosCliente");
+    const displayUserName = document.getElementById("displayUserName");
+    const displayUserWa = document.getElementById("displayUserWa");
+    const inputNombre = document.getElementById("clienteNombre");
+    const inputWhatsapp = document.getElementById("clienteWhatsapp");
+    const checkRecordar = document.getElementById("checkRecordar");
+
+    // Inicializar Usuario Recordado (por Cookie del servidor o LocalStorage)
+    function iniciarUsuario() {
+      let user = usuarioServidor;
+      if (!user) {
+        try {
+          const localStr = localStorage.getItem("viandas_usuario");
+          if (localStr) user = JSON.parse(localStr);
+        } catch (e) {}
+      }
+
+      if (user && user.nombre && user.whatsapp) {
+        inputNombre.value = user.nombre;
+        inputWhatsapp.value = user.whatsapp;
+        displayUserName.textContent = user.nombre;
+        displayUserWa.textContent = user.whatsapp;
+        userWelcomeCard.style.display = "flex";
+        cardDatosCliente.style.display = "none";
+        try {
+          localStorage.setItem("viandas_usuario", JSON.stringify(user));
+        } catch (e) {}
+      } else {
+        userWelcomeCard.style.display = "none";
+        cardDatosCliente.style.display = "block";
+      }
+    }
+
+    async function cambiarUsuario() {
+      try {
+        await fetch("/api/usuario/olvidar", { method: "POST" });
+        localStorage.removeItem("viandas_usuario");
+      } catch (e) {}
+
+      inputNombre.value = "";
+      inputWhatsapp.value = "";
+      userWelcomeCard.style.display = "none";
+      cardDatosCliente.style.display = "block";
+      inputNombre.focus();
+    }
+
+    // Event listeners para tabs de días
+    dayTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        dayTabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        diaActual = tab.getAttribute("data-dia");
+        renderDishes();
+      });
+    });
+
+    function dishAvailableOnDay(item, dia) {
+      if (!item.dias || item.dias.length === 0) return true;
+      if (item.dias.includes("Todos") || item.dias.includes("todos")) return true;
+      return item.dias.some(d => d.toLowerCase() === dia.toLowerCase());
+    }
+
+    function sanitizeKey(str) {
+      return String(str).replace(/[^a-zA-Z0-9]/g, '_');
+    }
+
+    function renderDishes() {
+      dishesContainer.innerHTML = "";
+      if (menuItems.length === 0) {
+        dishesContainer.innerHTML = "<p style='color: var(--gray-600); font-size: 0.9rem;'>No hay platos disponibles en este momento.</p>";
+        return;
+      }
+
+      // Filtrar platos del día actual
+      const itemsDelDia = menuItems.filter(item => dishAvailableOnDay(item, diaActual));
+
+      if (itemsDelDia.length === 0) {
+        dishesContainer.innerHTML = `<p style='color: var(--gray-600); font-size: 0.9rem; text-align: center; padding: 20px 0;'>No hay platos programados para el ${diaActual}.</p>`;
+        return;
+      }
+
+      // Separar menú principal del día y platos fijos de todos los días
+      const platosEspeciales = itemsDelDia.filter(item => !(item.dias && item.dias.includes("Todos")));
+      const platosFijos = itemsDelDia.filter(item => (item.dias && item.dias.includes("Todos")));
+
+      if (platosEspeciales.length > 0) {
+        const headerEsp = document.createElement("div");
+        headerEsp.className = "menu-category-header";
+        headerEsp.innerHTML = `🍲 Menú Principal del ${diaActual}`;
+        dishesContainer.appendChild(headerEsp);
+
+        platosEspeciales.forEach(item => {
+          dishesContainer.appendChild(crearElementoPlato(item));
+        });
+      }
+
+      if (platosFijos.length > 0) {
+        const headerFijos = document.createElement("div");
+        headerFijos.className = "menu-category-header";
+        headerFijos.innerHTML = platosEspeciales.length > 0 
+          ? `🥗 Platos de Todos los Días` 
+          : `🥗 Platos Disponibles para el ${diaActual}`;
+        dishesContainer.appendChild(headerFijos);
+
+        platosFijos.forEach(item => {
+          dishesContainer.appendChild(crearElementoPlato(item));
+        });
+      }
+    }
+
+    function crearElementoPlato(item) {
+      const tieneSabores = item.sabores && item.sabores.length > 0;
+      const esEmpanada = item.tipo === 'empanadas' || item.nombre.toLowerCase().includes('empanada');
+      const esSandwich = item.tipo === 'sandwiches' || item.nombre.toLowerCase().includes('sandwich') || item.nombre.toLowerCase().includes('sanguche');
+
+      const photoHtml = item.foto 
+        ? `<img src="${item.foto}" class="dish-thumb" alt="${item.nombre}">`
+        : `<div class="dish-placeholder">${esEmpanada ? '🥟' : esSandwich ? '🥪' : item.tipo === 'tarta' ? '🥧' : item.tipo === 'ensalada' ? '🥗' : '🍲'}</div>`;
+
+      // CASO 1: PLATOS CON SELECCIÓN DE SABORES (Empanadas, Sánguches, Tartas, Ensaladas)
+      if (tieneSabores) {
+        const container = document.createElement("div");
+        container.className = "dish-expandable";
+        container.id = `dish-block-${item.id}`;
+
+        let tituloPlato = item.nombre;
+        let subtextoPlato = "Tocá para elegir opciones ▾";
+        let precioTexto = `$${item.precio.toLocaleString('es-AR')}`;
+
+        if (esEmpanada) {
+          tituloPlato = "Empanadas:";
+          precioTexto = `$${item.precio.toLocaleString('es-AR')} bandeja x3`;
+          subtextoPlato = "Tocá para elegir los 3 sabores ▾";
+        } else if (esSandwich) {
+          tituloPlato = "Sandwiches:";
+          precioTexto = `$${item.precio.toLocaleString('es-AR')} c/u`;
+          subtextoPlato = "Tocá para elegir variedad ▾";
+        } else {
+          tituloPlato = `${item.nombre}:`;
+          precioTexto = `$${item.precio.toLocaleString('es-AR')} c/u`;
+          subtextoPlato = "Tocá para elegir variedad ▾";
+        }
+
+        // Determinar badge de selección
+        let badgeHtml = "";
+        let badgeClass = "badge-selection";
+        if (esEmpanada) {
+          const empState = empanadasState[diaActual] || {};
+          const totalEmp = Object.values(empState).reduce((a, b) => a + b, 0);
+          if (totalEmp > 0) {
+            if (totalEmp % 3 === 0) {
+              badgeHtml = `${totalEmp / 3} bandeja(s) (${totalEmp} emp.)`;
+            } else {
+              badgeClass = "badge-selection-incomplete";
+              badgeHtml = `${totalEmp} emp. (faltan ${3 - (totalEmp % 3)})`;
+            }
+          }
+        } else {
+          let totalSabores = 0;
+          item.sabores.forEach(s => {
+            const key = `item_${item.id}_${s}`;
+            totalSabores += (orden[diaActual][key]?.cantidad || 0);
+          });
+          if (totalSabores > 0) {
+            badgeHtml = `${totalSabores} elegido(s)`;
+          }
+        }
+
+        const isDrawerOpen = drawerOpenState[diaActual][item.id] || (badgeHtml !== "");
+
+        // Filas de cada sabor dentro del drawer
+        let saboresHtml = "";
+        if (esEmpanada) {
+          const empState = empanadasState[diaActual] || {};
+          const totalEmp = Object.values(empState).reduce((a, b) => a + b, 0);
+          saboresHtml += `<div style="font-size: 0.85rem; color: #475569; margin-bottom: 8px; font-weight: 700;">🥟 Elegí tus sabores (vienen 3 empanadas por bandeja a $${item.precio.toLocaleString('es-AR')}):</div>`;
+          item.sabores.forEach(sabor => {
+            const cnt = empState[sabor] || 0;
+            saboresHtml += `
+              <div class="sabor-row">
+                <span class="sabor-name">${sabor}</span>
+                <div class="counter">
+                  <button type="button" onclick="cambiarSaborEmpanada(${item.id}, '${sabor}', -1)">−</button>
+                  <span class="count-val" id="cnt-emp-${item.id}-${sanitizeKey(sabor)}">${cnt}</span>
+                  <button type="button" onclick="cambiarSaborEmpanada(${item.id}, '${sabor}', 1)">+</button>
+                </div>
+              </div>
+            `;
+          });
+          let statusEmpMsg = "";
+          if (totalEmp > 0) {
+            if (totalEmp % 3 === 0) {
+              statusEmpMsg = `<div id="status-emp-${item.id}" style="margin-top: 8px; font-size: 0.82rem; color: #047857; font-weight: 800;">✅ ${totalEmp / 3} bandeja(s) completa(s) = $${((totalEmp / 3) * item.precio).toLocaleString('es-AR')}</div>`;
+            } else {
+              statusEmpMsg = `<div id="status-emp-${item.id}" style="margin-top: 8px; font-size: 0.82rem; color: #b45309; font-weight: 800;">⚠️ ${totalEmp} seleccionadas. Faltan ${3 - (totalEmp % 3)} para completar la bandeja de 3.</div>`;
+            }
+          } else {
+            statusEmpMsg = `<div id="status-emp-${item.id}" style="margin-top: 8px; font-size: 0.8rem; color: #64748b;">Seleccioná las 3 empanadas que más te gusten.</div>`;
+          }
+          saboresHtml += statusEmpMsg;
+        } else {
+          saboresHtml += `<div style="font-size: 0.85rem; color: #475569; margin-bottom: 8px; font-weight: 700;">Seleccioná las variedades que querés ($${item.precio.toLocaleString('es-AR')} c/u):</div>`;
+          item.sabores.forEach(sabor => {
+            const key = `item_${item.id}_${sabor}`;
+            const cnt = orden[diaActual][key]?.cantidad || 0;
+            saboresHtml += `
+              <div class="sabor-row">
+                <span class="sabor-name">${sabor}</span>
+                <div class="counter">
+                  <button type="button" onclick="cambiarSaborSimple(${item.id}, '${sabor.replace(/'/g, "\\'")}', -1)">−</button>
+                  <span class="count-val" id="cnt-sab-${item.id}-${sanitizeKey(sabor)}">${cnt}</span>
+                  <button type="button" onclick="cambiarSaborSimple(${item.id}, '${sabor.replace(/'/g, "\\'")}', 1)">+</button>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        container.innerHTML = `
+          <div class="dish-expandable-header" onclick="toggleDrawer(${item.id})">
+            ${photoHtml}
+            <div class="dish-info">
+              <div class="dish-name">${tituloPlato}</div>
+              <div class="dish-price">${precioTexto}</div>
+              <div class="dish-subtitle" id="subtitle-${item.id}">${subtextoPlato}</div>
+            </div>
+            <div id="badge-header-${item.id}">
+              ${badgeHtml ? `<span class="${badgeClass}">${badgeHtml}</span>` : `<span style="font-size: 1.1rem; color: var(--gray-600); padding-right: 4px;">▾</span>`}
+            </div>
+          </div>
+          <div class="sabores-drawer" id="drawer-${item.id}" style="display: ${isDrawerOpen ? 'block' : 'none'};">
+            ${saboresHtml}
+          </div>
+        `;
+        return container;
+      }
+
+      // CASO 2: PLATOS INDIVIDUALES SIMPLES (Sin sub-sabores)
+      const cant = orden[diaActual][`item_${item.id}`]?.cantidad || 0;
+      const row = document.createElement("div");
+      row.className = "dish-item";
+      row.innerHTML = `
+        ${photoHtml}
+        <div class="dish-info">
+          <div class="dish-name">${item.nombre}</div>
+          <div class="dish-price">$${item.precio.toLocaleString('es-AR', {minimumFractionDigits: 0})}</div>
+        </div>
+        <div class="counter">
+          <button type="button" onclick="modificarCantidadSimple(${item.id}, -1)">−</button>
+          <span class="count-val" id="cnt-simple-${item.id}">${cant}</span>
+          <button type="button" onclick="modificarCantidadSimple(${item.id}, 1)">+</button>
+        </div>
+      `;
+      return row;
+    }
+
+    window.toggleDrawer = function(itemId) {
+      const drawer = document.getElementById(`drawer-${itemId}`);
+      if (!drawer) return;
+      const currentlyOpen = drawer.style.display === "block";
+      drawer.style.display = currentlyOpen ? "none" : "block";
+      drawerOpenState[diaActual][itemId] = !currentlyOpen;
+
+      const sub = document.getElementById(`subtitle-${itemId}`);
+      if (sub) {
+        sub.innerHTML = currentlyOpen ? "Tocá para elegir opciones ▾" : "Opciones desplegadas ▴";
+      }
+    };
+
+    window.cambiarSaborEmpanada = function(itemId, sabor, delta) {
+      if (!empanadasState[diaActual]) empanadasState[diaActual] = {};
+      const actual = empanadasState[diaActual][sabor] || 0;
+      const nuevo = Math.max(0, actual + delta);
+      if (nuevo === 0) {
+        delete empanadasState[diaActual][sabor];
+      } else {
+        empanadasState[diaActual][sabor] = nuevo;
+      }
+
+      // Actualizar contador numérico en pantalla
+      const cntEl = document.getElementById(`cnt-emp-${itemId}-${sanitizeKey(sabor)}`);
+      if (cntEl) cntEl.textContent = nuevo;
+
+      // Calcular total de empanadas del día
+      const totalEmp = Object.values(empanadasState[diaActual]).reduce((a, b) => a + b, 0);
+      const bandejas = Math.floor(totalEmp / 3);
+      const item = menuItems.find(m => m.id === itemId);
+
+      if (totalEmp > 0) {
+        const detalle = Object.entries(empanadasState[diaActual])
+          .filter(([_, c]) => c > 0)
+          .map(([s, c]) => `${c} ${s}`)
+          .join(", ");
+        
+        orden[diaActual][`empanadas_${itemId}`] = {
+          id: itemId,
+          plato_nombre: `Empanadas (${detalle})`,
+          cantidad: bandejas > 0 ? bandejas : 1,
+          precio_unitario: item.precio,
+          es_empanada: true,
+          total_empanadas: totalEmp
+        };
+      } else {
+        delete orden[diaActual][`empanadas_${itemId}`];
+      }
+
+      // Actualizar mensaje de estado dentro del drawer
+      const statusEl = document.getElementById(`status-emp-${itemId}`);
+      if (statusEl && item) {
+        if (totalEmp > 0) {
+          if (totalEmp % 3 === 0) {
+            statusEl.innerHTML = `<span style="color: #047857;">✅ ${totalEmp / 3} bandeja(s) completa(s) = $${((totalEmp / 3) * item.precio).toLocaleString('es-AR')}</span>`;
+          } else {
+            statusEl.innerHTML = `<span style="color: #b45309;">⚠️ ${totalEmp} seleccionadas. Faltan ${3 - (totalEmp % 3)} para completar la bandeja de 3.</span>`;
+          }
+        } else {
+          statusEl.innerHTML = `<span style="color: #64748b;">Seleccioná las 3 empanadas que más te gusten.</span>`;
+        }
+      }
+
+      // Actualizar badge en el encabezado del plato
+      const badgeHeader = document.getElementById(`badge-header-${itemId}`);
+      if (badgeHeader) {
+        if (totalEmp > 0) {
+          if (totalEmp % 3 === 0) {
+            badgeHeader.innerHTML = `<span class="badge-selection">${totalEmp / 3} bandeja(s)</span>`;
+          } else {
+            badgeHeader.innerHTML = `<span class="badge-selection-incomplete">${totalEmp} emp. (faltan ${3 - (totalEmp % 3)})</span>`;
+          }
+        } else {
+          badgeHeader.innerHTML = `<span style="font-size: 1.1rem; color: var(--gray-600); padding-right: 4px;">▾</span>`;
+        }
+      }
+
+      actualizarResumenTotales();
+      actualizarBadgesTabs();
+    };
+
+    window.cambiarSaborSimple = function(itemId, sabor, delta) {
+      const key = `item_${itemId}_${sabor}`;
+      const actual = orden[diaActual][key]?.cantidad || 0;
+      const nuevo = Math.max(0, actual + delta);
+      const item = menuItems.find(m => m.id === itemId);
+
+      if (nuevo === 0) {
+        delete orden[diaActual][key];
+      } else {
+        // Nombre elegante sin duplicar si ya dice sandwich
+        let nombrePlato = item.nombre;
+        if (nombrePlato.endsWith(':')) nombrePlato = nombrePlato.slice(0, -1);
+        orden[diaActual][key] = {
+          id: itemId,
+          plato_nombre: `${nombrePlato} (${sabor})`,
+          cantidad: nuevo,
+          precio_unitario: item.precio
+        };
+      }
+
+      const cntEl = document.getElementById(`cnt-sab-${itemId}-${sanitizeKey(sabor)}`);
+      if (cntEl) cntEl.textContent = nuevo;
+
+      // Actualizar badge del encabezado
+      let totalSabores = 0;
+      item.sabores.forEach(s => {
+        const k = `item_${itemId}_${s}`;
+        totalSabores += (orden[diaActual][k]?.cantidad || 0);
+      });
+
+      const badgeHeader = document.getElementById(`badge-header-${itemId}`);
+      if (badgeHeader) {
+        if (totalSabores > 0) {
+          badgeHeader.innerHTML = `<span class="badge-selection">${totalSabores} elegido(s)</span>`;
+        } else {
+          badgeHeader.innerHTML = `<span style="font-size: 1.1rem; color: var(--gray-600); padding-right: 4px;">▾</span>`;
+        }
+      }
+
+      actualizarResumenTotales();
+      actualizarBadgesTabs();
+    };
+
+    window.modificarCantidadSimple = function(itemId, delta) {
+      const key = `item_${itemId}`;
+      const actual = orden[diaActual][key]?.cantidad || 0;
+      const nuevo = Math.max(0, actual + delta);
+      const item = menuItems.find(m => m.id === itemId);
+
+      if (nuevo === 0) {
+        delete orden[diaActual][key];
+      } else {
+        orden[diaActual][key] = {
+          id: itemId,
+          plato_nombre: item.nombre,
+          cantidad: nuevo,
+          precio_unitario: item.precio
+        };
+      }
+
+      const el = document.getElementById(`cnt-simple-${itemId}`);
+      if (el) el.textContent = nuevo;
+
+      actualizarResumenTotales();
+      actualizarBadgesTabs();
+    };
+
+    function actualizarBadgesTabs() {
+      dayTabs.forEach(tab => {
+        const d = tab.getAttribute("data-dia");
+        let totalDia = 0;
+        for (const [key, reg] of Object.entries(orden[d] || {})) {
+          if (reg && reg.cantidad > 0) {
+            totalDia += reg.cantidad;
+          }
+        }
+        let badge = tab.querySelector(".badge-count");
+        if (totalDia > 0) {
+          if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "badge-count";
+            tab.appendChild(badge);
+          }
+          badge.textContent = totalDia;
+        } else if (badge) {
+          badge.remove();
+        }
+      });
+    }
+
+    function actualizarResumenTotales() {
+      let totalCant = 0;
+      let totalDinero = 0;
+
+      dias.forEach(d => {
+        for (const [key, reg] of Object.entries(orden[d] || {})) {
+          if (reg && reg.cantidad > 0) {
+            totalCant += reg.cantidad;
+            totalDinero += (reg.cantidad * reg.precio_unitario);
+          }
+        }
+      });
+
+      labelTotalItems.textContent = `${totalCant} vianda${totalCant === 1 ? '' : 's'} seleccionada${totalCant === 1 ? '' : 's'}`;
+      labelTotalPrice.textContent = `$${totalDinero.toLocaleString('es-AR', {minimumFractionDigits: 0})}`;
+
+      if (!pedidosAbiertos) {
+        btnConfirmar.disabled = true;
+        btnConfirmar.textContent = "Pedidos Cerrados (Abre el Lunes)";
+        btnConfirmar.style.opacity = "0.7";
+        btnConfirmar.style.cursor = "not-allowed";
+      } else {
+        btnConfirmar.disabled = (totalCant === 0);
+        btnConfirmar.textContent = "Confirmar Pedido";
+        btnConfirmar.style.opacity = "1";
+        btnConfirmar.style.cursor = "pointer";
+      }
+    }
+
+    // Enviar Pedido
+    btnConfirmar.addEventListener("click", async () => {
+      if (!pedidosAbiertos) {
+        alert("Los pedidos para la próxima semana están cerrados. La cocina ya se encuentra preparando las viandas. Se vuelven a abrir el próximo lunes.");
+        return;
+      }
+
+      const nombre = inputNombre.value.trim();
+      const whatsapp = inputWhatsapp.value.trim();
+      const notas = document.getElementById("clienteNotas").value.trim();
+      const recordar = checkRecordar ? checkRecordar.checked : true;
+
+      if (!nombre) {
+        alert("Por favor, ingresá tu Nombre y Apellido.");
+        cardDatosCliente.style.display = "block";
+        inputNombre.focus();
+        return;
+      }
+
+      if (!whatsapp) {
+        alert("Por favor, ingresá tu número de WhatsApp para contactarte.");
+        cardDatosCliente.style.display = "block";
+        inputWhatsapp.focus();
+        return;
+      }
+
+      // Validar si hay empanadas incompletas (deben ser múltiplo de 3)
+      for (const d of dias) {
+        const empState = empanadasState[d] || {};
+        const totalEmp = Object.values(empState).reduce((a, b) => a + b, 0);
+        if (totalEmp > 0 && totalEmp % 3 !== 0) {
+          alert(`En el día ${d} tenés ${totalEmp} empanadas seleccionadas. Las empanadas se venden en bandejas de 3. Por favor agregá ${3 - (totalEmp % 3)} empanada(s) para completar la bandeja.`);
+          return;
+        }
+      }
+
+      // Estructurar items
+      const itemsPayload = [];
+      dias.forEach(d => {
+        for (const [key, reg] of Object.entries(orden[d] || {})) {
+          if (reg && reg.cantidad > 0) {
+            itemsPayload.push({
+              dia: d,
+              plato_id: reg.id,
+              plato_nombre: reg.plato_nombre,
+              cantidad: reg.cantidad,
+              precio_unitario: reg.precio_unitario
+            });
+          }
+        }
+      });
+
+      if (itemsPayload.length === 0) {
+        alert("Por favor, seleccioná al menos una vianda.");
+        return;
+      }
+
+      btnConfirmar.disabled = true;
+      btnConfirmar.textContent = "Guardando pedido...";
+
+      try {
+        const resp = await fetch("/api/pedir", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cliente: nombre,
+            whatsapp: whatsapp,
+            notas: notas,
+            items: itemsPayload,
+            recordar_usuario: recordar
+          })
+        });
+
+        const data = await resp.json();
+        if (data.ok) {
+          // Si el usuario fue recordado o devuelto, guardar en localStorage
+          if (data.usuario) {
+            try {
+              localStorage.setItem("viandas_usuario", JSON.stringify(data.usuario));
+            } catch (e) {}
+          }
+
+          // Calcular total a pagar
+          let totalDinero = 0;
+          itemsPayload.forEach(it => {
+            const sub = it.cantidad * it.precio_unitario;
+            totalDinero += sub;
+          });
+          const totalFinal = data.total_monto || totalDinero;
+          const aliasFinal = data.alias_mercadopago || aliasMercadoPago || "julia.rabovich";
+
+          // Actualizar datos del bloque de pago Mercado Pago
+          document.getElementById("modalMpMonto").textContent = "$" + totalFinal.toLocaleString('es-AR', {minimumFractionDigits: 0});
+          document.getElementById("modalMpAliasTexto").textContent = aliasFinal;
+
+          // Copiar alias automáticamente al portapapeles
+          copiarAliasSilencioso(aliasFinal);
+
+          const waClean = (whatsappMama || "").replace(/\D/g, "");
+          const textoComprobante = encodeURIComponent(`¡Hola! Ya hice mi pedido de viandas para la semana que viene por un total de $${totalFinal.toLocaleString('es-AR')}. Te paso el comprobante de transferencia a ${aliasFinal}:`);
+          const hrefWa = waClean ? `https://wa.me/${waClean}?text=${textoComprobante}` : `https://wa.me/?text=${textoComprobante}`;
+          document.getElementById("btnEnviarComprobanteWa").href = hrefWa;
+
+          // Configurar botón para abrir Mercado Pago
+          const btnMp = document.getElementById("btnAbrirMp");
+          btnMp.onclick = (e) => {
+            e.preventDefault();
+            abrirMercadoPagoApp(aliasFinal);
+          };
+
+          // Construir resumen detallado para el colapsable
+          let html = `<strong>Cliente:</strong> ${nombre}<br><strong>WhatsApp:</strong> ${whatsapp}<br><br>`;
+          html += `<strong>Detalle para la próxima semana:</strong><br>`;
+          itemsPayload.forEach(it => {
+            const sub = it.cantidad * it.precio_unitario;
+            html += `• <b>${it.dia}:</b> ${it.cantidad}x ${it.plato_nombre} ($${sub})<br>`;
+          });
+          html += `<br><strong>Total:</strong> $${totalFinal.toLocaleString('es-AR')}`;
+          if (notas) html += `<br><i>Nota: "${notas}"</i>`;
+
+          resumenModalDetalle.innerHTML = html;
+          const bannerExitoConf = document.getElementById("modalExitoConfirmado");
+          const cardMpExito = document.getElementById("cardMercadoPagoExito");
+          if (bannerExitoConf) bannerExitoConf.style.display = "none";
+          if (cardMpExito) cardMpExito.style.display = "block";
+          ultimosPedidosIds = data.pedidos_ids || [];
+          modalExito.classList.add("active");
+          iniciarSincronizacionEnVivo();
+
+          // Resetear platos seleccionados pero conservar usuario recordado
+          dias.forEach(d => { orden[d] = {}; });
+          document.getElementById("clienteNotas").value = "";
+          iniciarUsuario();
+          renderDishes();
+          actualizarResumenTotales();
+          actualizarBadgesTabs();
+        } else {
+          alert("Hubo un problema al registrar el pedido: " + (data.error || "Intente nuevamente"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión al enviar el pedido.");
+      } finally {
+        if (pedidosAbiertos) {
+          btnConfirmar.textContent = "Confirmar Pedido";
+          btnConfirmar.disabled = false;
+        }
+      }
+    });
+
+    btnCerrarModal.addEventListener("click", () => {
+      modalExito.classList.remove("active");
+      actualizarBadgeMisPedidos();
+    });
+
+    // Funciones de Pago y Copiado de Alias Mercado Pago
+    function copiarAlias(alias) {
+      const texto = alias || aliasMercadoPago || "julia.rabovich";
+      copiarTextoPortapapeles(texto);
+      
+      const btns = document.querySelectorAll(".btn-mp-copy");
+      btns.forEach(b => {
+        b.textContent = "✓ ¡Alias Copiado!";
+        b.style.background = "#dcfce7";
+        b.style.color = "#166534";
+        b.style.borderColor = "#86efac";
+      });
+      setTimeout(() => {
+        btns.forEach(b => {
+          b.textContent = "📋 Copiar Alias";
+          b.style.background = "#e0f2fe";
+          b.style.color = "#0369a1";
+          b.style.borderColor = "#bae6fd";
+        });
+      }, 2500);
+    }
+
+    function copiarAliasSilencioso(alias) {
+      const texto = alias || aliasMercadoPago || "julia.rabovich";
+      copiarTextoPortapapeles(texto);
+    }
+
+    function copiarTextoPortapapeles(texto) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).catch(() => {});
+      } else {
+        const el = document.createElement('textarea');
+        el.value = texto;
+        el.style.position = 'fixed';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(el);
+      }
+    }
+
+    function copiarMontoModal() {
+      const el = document.getElementById("modalMpMonto");
+      if (el) {
+        const montoLimpio = el.textContent.replace('$', '').replace(/\./g, '').trim();
+        copiarTextoPortapapeles(montoLimpio);
+        const btn = document.getElementById("btnCopiarMonto");
+        if (btn) {
+          btn.textContent = "✓ ¡Monto Copiado!";
+          btn.style.background = "#dcfce7";
+          btn.style.color = "#166534";
+          setTimeout(() => {
+            btn.textContent = "📋 Copiar Monto";
+            btn.style.background = "#e0f2fe";
+            btn.style.color = "#0369a1";
+          }, 2000);
+        }
+      }
+    }
+
+    function abrirMercadoPagoApp(alias, customLink) {
+      copiarAlias(alias || aliasMercadoPago);
+      const link = customLink || linkPagoMp;
+      if (link && link.startsWith("http")) {
+        window.open(link, "_blank");
+        return;
+      }
+
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        // En celulares intenta abrir la app instalada
+        window.location.href = "mercadopago://";
+        setTimeout(() => {
+          window.open("https://www.mercadopago.com.ar/money-out/transfer/", "_blank");
+        }, 1200);
+      } else {
+        // En PC abre la pantalla oficial de Transferir Dinero en Mercado Pago
+        window.open("https://www.mercadopago.com.ar/money-out/transfer/", "_blank");
+      }
+    }
+
+    // Gestión de Mis Pedidos y Cancelación hasta el Miércoles a las 12 PM
+    let estadoPedidosPrevios = {};
+    let pollingInterval = null;
+    let ultimosPedidosIds = [];
+
+    function renderMisPedidosData(pedidos) {
+      const contenedor = document.getElementById("misPedidosLista");
+      if (!pedidos || pedidos.length === 0) {
+        contenedor.innerHTML = "<div style='text-align: center; padding: 24px; color: var(--gray-600); font-size: 0.9rem;'>No tenés pedidos registrados aún para la próxima semana.</div>";
+        return;
+      }
+
+      let html = "";
+      pedidos.forEach(p => {
+        let cancelBlock = "";
+        if (p.puede_cancelar) {
+          cancelBlock = `
+            <div class="time-badge-ok" style="margin-top: 6px;">⏱️ Podés cancelar o modificar hasta el Miércoles a las 12 PM</div>
+            <button type="button" class="btn-cancelar" onclick="cancelarPedido(${p.id})">🗑️ Cancelar este pedido</button>
+          `;
+        } else {
+          const cleanWa = (p.whatsapp_mama || whatsappMama || "").replace(/\D/g, "");
+          const mensajeWa = encodeURIComponent(`¡Hola! Te escribo para consultar/modificar mi pedido #${p.id} (${p.cantidad}x ${p.plato} para el ${p.dia}).`);
+          const waHref = cleanWa ? `https://wa.me/${cleanWa}?text=${mensajeWa}` : `https://wa.me/?text=${mensajeWa}`;
+
+          cancelBlock = `
+            <div class="time-badge-expired" style="margin-top: 6px;">🔒 Cancelación web finalizada (Límite Miércoles 12 PM)</div>
+            <p style="font-size: 0.78rem; color: var(--gray-600); margin-top: 4px;">La cocina ya está en preparación. Si necesitás cancelar o cambiar algo urgente, comunicate directamente por WhatsApp:</p>
+            <a href="${waHref}" target="_blank" class="btn-wa-help">💬 Avisar por WhatsApp</a>
+          `;
+        }
+
+        let pagoBlock = "";
+        const aliasPed = p.alias_mercadopago || aliasMercadoPago || "julia.rabovich";
+        if (!p.pagado) {
+          pagoBlock = `
+            <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 10px 12px; margin-top: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <strong style="color: #0369a1; font-size: 0.82rem;">💳 Pendiente de Pago por Mercado Pago</strong>
+                <button type="button" class="btn-mp-copy" style="padding: 3px 8px; font-size: 0.72rem;" onclick="copiarAlias('${aliasPed}')">📋 Copiar Alias</button>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--gray-600);">
+                Transferir <b>$${p.total.toLocaleString('es-AR')}</b> al alias: <b style="color: #0284c7; font-family: monospace;">${aliasPed}</b>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 6px;">
+                <button type="button" class="btn-mp-primary" style="padding: 6px 12px; font-size: 0.78rem; border-radius: 8px;" onclick="abrirMercadoPagoApp('${aliasPed}', '${p.link_pago_mp || ''}')">
+                  🚀 Abrir Mercado Pago
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          pagoBlock = `
+            <div class="card-pago-confirmado">
+              <span style="font-size: 1.5rem;">✅</span>
+              <div>
+                <strong style="color: #065f46; font-size: 0.95rem; display: block; margin-bottom: 2px;">Pago confirmado</strong>
+                <span style="color: #047857; font-size: 0.8rem; line-height: 1.4; display: block;">Ya recibimos tu pago. ¡Muchas gracias por tu compra!</span>
+              </div>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="order-history-card" id="pedido-card-${p.id}">
+            <div class="order-history-header">
+              <div>
+                <strong style="color: var(--primary);">📅 ${p.dia}</strong>
+                <span style="font-size: 0.78rem; color: var(--gray-600); margin-left: 6px;">#${p.id}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <strong style="color: var(--dark); font-size: 1rem;">$${p.total.toLocaleString('es-AR')}</strong>
+                <span class="badge-status-pago ${p.pagado ? 'pago-si' : 'pago-no'}">
+                  ${p.pagado ? '✅ Pago confirmado' : '⏳ Pendiente'}
+                </span>
+              </div>
+            </div>
+            <div style="font-weight: 700; font-size: 0.92rem; color: var(--dark);">${p.cantidad}x ${p.plato}</div>
+            <div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 2px;">
+              Pedido: ${p.fecha_registro}
+              ${p.notas ? `<br><i>Nota: "${p.notas}"</i>` : ''}
+            </div>
+            ${pagoBlock}
+            ${cancelBlock}
+          </div>
+        `;
+      });
+      contenedor.innerHTML = html;
+    }
+
+    async function abrirMisPedidos() {
+      const modal = document.getElementById("modalMisPedidos");
+      const contenedor = document.getElementById("misPedidosLista");
+      modal.classList.add("active");
+      contenedor.innerHTML = "<p style='color: var(--gray-600); font-size: 0.9rem;'>Cargando tus pedidos...</p>";
+
+      const wa = inputWhatsapp.value.trim();
+      let url = "/api/mis-pedidos";
+      if (wa) url += "?whatsapp=" + encodeURIComponent(wa);
+
+      try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+        renderMisPedidosData(data.pedidos);
+        actualizarBadgeMisPedidosUI(data.pedidos);
+      } catch (err) {
+        console.error(err);
+        contenedor.innerHTML = "<p style='color: red;'>Error al cargar tus pedidos.</p>";
+      }
+    }
+
+    function cerrarMisPedidos() {
+      document.getElementById("modalMisPedidos").classList.remove("active");
+    }
+
+    async function cancelarPedido(pedidoId) {
+      if (!confirm(`¿Estás seguro/a de que querés cancelar el pedido #${pedidoId}?`)) return;
+      try {
+        const resp = await fetch("/api/pedido/cancelar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pedido_id: pedidoId })
+        });
+        const data = await resp.json();
+        if (data.ok) {
+          alert("✓ " + data.mensaje);
+          abrirMisPedidos();
+          verificarEstadoPedidosEnVivo();
+        } else {
+          alert("Aviso: " + (data.error || "No se pudo cancelar el pedido."));
+          abrirMisPedidos();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión al cancelar pedido.");
+      }
+    }
+
+    async function verificarEstadoPedidosEnVivo() {
+      const wa = (inputWhatsapp ? inputWhatsapp.value.trim() : "") || (usuarioServidor ? usuarioServidor.whatsapp : "");
+      let url = "/api/mis-pedidos";
+      if (wa) url += "?whatsapp=" + encodeURIComponent(wa);
+
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (!data.ok || !data.pedidos) return;
+
+        let huboCambioAPagado = false;
+        let nombrePedidoPagado = "";
+
+        data.pedidos.forEach(p => {
+          const prevPagado = estadoPedidosPrevios[p.id];
+          if (prevPagado === false && p.pagado === true) {
+            huboCambioAPagado = true;
+            nombrePedidoPagado = `${p.cantidad}x ${p.plato} (${p.dia})`;
+          }
+          estadoPedidosPrevios[p.id] = p.pagado;
+        });
+
+        // 1. Si modalMisPedidos está abierto, refrescar contenido dinámicamente
+        const modalMisPedidos = document.getElementById("modalMisPedidos");
+        if (modalMisPedidos && modalMisPedidos.classList.contains("active")) {
+          renderMisPedidosData(data.pedidos);
+        }
+
+        // 2. Si modalExito está abierto
+        const modalExito = document.getElementById("modalExito");
+        if (modalExito && modalExito.classList.contains("active")) {
+          const cardMp = document.getElementById("cardMercadoPagoExito");
+          const bannerConf = document.getElementById("modalExitoConfirmado");
+          const algunPagado = data.pedidos.some(p => {
+            if (ultimosPedidosIds.length > 0) return ultimosPedidosIds.includes(p.id) && p.pagado;
+            return p.pagado;
+          });
+          if (algunPagado) {
+            if (cardMp) cardMp.style.display = "none";
+            if (bannerConf) bannerConf.style.display = "block";
+          }
+        }
+
+        // 3. Notificación flotante si se confirmó en vivo
+        if (huboCambioAPagado) {
+          mostrarToastCliente(`🎉 ¡Pago confirmado! Ya recibimos el pago de tu pedido (${nombrePedidoPagado}). ¡Muchas gracias!`);
+        }
+
+        // 4. Actualizar badge de cabecera
+        actualizarBadgeMisPedidosUI(data.pedidos);
+
+      } catch (e) {}
+    }
+
+    function mostrarToastCliente(msg) {
+      let toast = document.getElementById("toastCliente");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toastCliente";
+        toast.style.position = "fixed";
+        toast.style.bottom = "24px";
+        toast.style.right = "24px";
+        toast.style.background = "#065f46";
+        toast.style.color = "#ffffff";
+        toast.style.padding = "14px 20px";
+        toast.style.borderRadius = "14px";
+        toast.style.boxShadow = "0 10px 30px rgba(0,0,0,0.3)";
+        toast.style.fontWeight = "700";
+        toast.style.fontSize = "0.9rem";
+        toast.style.zIndex = "99999";
+        toast.style.transition = "all 0.35s ease";
+        toast.style.display = "flex";
+        toast.style.alignItems = "center";
+        toast.style.gap = "10px";
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = msg;
+      toast.style.opacity = "1";
+      toast.style.transform = "translateY(0)";
+      clearTimeout(toast.timeout);
+      toast.timeout = setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(15px)";
+      }, 5000);
+    }
+
+    function actualizarBadgeMisPedidosUI(pedidos) {
+      const badge = document.getElementById("badgeMisPedidos");
+      if (!badge) return;
+      if (pedidos && pedidos.length > 0) {
+        const pagados = pedidos.filter(p => p.pagado).length;
+        if (pagados === pedidos.length) {
+          badge.textContent = `${pedidos.length} ✓`;
+          badge.style.background = "#dcfce7";
+          badge.style.color = "#166534";
+        } else {
+          badge.textContent = pedidos.length;
+          badge.style.background = "white";
+          badge.style.color = "var(--primary)";
+        }
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+    }
+
+    function iniciarSincronizacionEnVivo() {
+      if (pollingInterval) clearInterval(pollingInterval);
+      verificarEstadoPedidosEnVivo();
+      pollingInterval = setInterval(verificarEstadoPedidosEnVivo, 3500);
+    }
+
+    // Inicializar vista
+    iniciarUsuario();
+    renderDishes();
+    actualizarResumenTotales();
+    iniciarSincronizacionEnVivo();
+  </script>
+</body>
+</html>
