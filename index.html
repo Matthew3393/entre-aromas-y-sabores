@@ -1032,8 +1032,8 @@
         <input type="text" id="clienteNombre" placeholder="Ej: Tu Nombre y Apellido" required>
       </div>
       <div class="form-group">
-        <label for="clienteWhatsapp">Número de WhatsApp *</label>
-        <input type="tel" id="clienteWhatsapp" placeholder="Ej: 11 2345 6789" required>
+        <label for="clienteWhatsapp">Número de WhatsApp * (solo números, mín. 7 dígitos)</label>
+        <input type="tel" id="clienteWhatsapp" placeholder="Ej: 1123456789" inputmode="numeric" pattern="[0-9]*" minlength="7" required>
       </div>
       <label class="checkbox-save">
         <input type="checkbox" id="checkRecordar" checked>
@@ -1212,6 +1212,11 @@
     const displayUserWa = document.getElementById("displayUserWa");
     const inputNombre = document.getElementById("clienteNombre");
     const inputWhatsapp = document.getElementById("clienteWhatsapp");
+    if (inputWhatsapp) {
+      inputWhatsapp.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '');
+      });
+    }
     const checkRecordar = document.getElementById("checkRecordar");
 
     // Inicializar Usuario Recordado (por Cookie del servidor o LocalStorage)
