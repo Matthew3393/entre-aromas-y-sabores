@@ -1002,9 +1002,14 @@
     <div class="badge-semana">✨ Pedidos para la próxima semana</div>
     <h1>Entre Aromas y Sabores</h1>
     <p>Comida fresca, rica y hecha como en casa. Elegí qué querés comer de Lunes a Viernes.</p>
-    <button type="button" class="btn-mis-pedidos" onclick="abrirMisPedidos()">
-      📜 Mis Pedidos <span id="badgeMisPedidos" style="display:none; background:white; color:var(--primary); font-size:0.75rem; padding:1px 6px; border-radius:999px; font-weight:800; margin-left:4px;">0</span>
-    </button>
+    <div style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 14px; flex-wrap: wrap;">
+      <button type="button" class="btn-mis-pedidos" onclick="abrirMisPedidos()">
+        📜 Mis Pedidos <span id="badgeMisPedidos" style="display:none; background:white; color:var(--primary); font-size:0.75rem; padding:1px 6px; border-radius:999px; font-weight:800; margin-left:4px;">0</span>
+      </button>
+      <button type="button" class="btn-mis-pedidos" id="btnHeaderLogin" onclick="abrirModalLogin()" style="background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.4);">
+        👤 Iniciar Sesión
+      </button>
+    </div>
   </header>
 
   <main class="container">
@@ -1026,7 +1031,12 @@
 
     <!-- Paso 1: Datos del Cliente (se oculta automáticamente si el usuario ya está recordado) -->
     <section class="card" id="cardDatosCliente">
-      <div class="card-title">👤 Tus Datos</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div class="card-title" style="margin-bottom: 0;">👤 Tus Datos</div>
+        <button type="button" onclick="abrirModalLogin()" style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+          🔑 ¿Ya pediste antes? Iniciar sesión
+        </button>
+      </div>
       <div class="form-group">
         <label for="clienteNombre">Nombre y Apellido *</label>
         <input type="text" id="clienteNombre" placeholder="Ej: Tu Nombre y Apellido" required>
@@ -1158,6 +1168,29 @@
     </div>
   </div>
 
+    <!-- Modal Iniciar Sesión por WhatsApp -->
+  <div class="modal-overlay" id="modalLogin">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--dark); margin: 0; display: flex; align-items: center; gap: 8px;">
+          <span>👤</span> Iniciar Sesión
+        </h3>
+        <button type="button" onclick="cerrarModalLogin()" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--gray-600); padding: 4px;">✕</button>
+      </div>
+      <p style="font-size: 0.86rem; color: var(--gray-600); margin-bottom: 14px; line-height: 1.45;">
+        Ingresá tu número de WhatsApp para recuperar tu nombre y ver los pedidos de viandas que hiciste para esta semana:
+      </p>
+      <div class="form-group">
+        <label for="loginWhatsapp">Número de WhatsApp (solo números):</label>
+        <input type="tel" id="loginWhatsapp" placeholder="Ej: 2944335707" inputmode="numeric" pattern="[0-9]*" minlength="7" style="font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px;">
+      </div>
+      <div id="loginErrorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px; border: 1px solid #fca5a5;"></div>
+      <button type="button" class="btn-submit" id="btnEjecutarLogin" onclick="ejecutarLoginWhatsapp()" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem;">
+        🔍 Entrar y recuperar mis pedidos
+      </button>
+    </div>
+  </div>
+
   <!-- Modal Historial y Modificación de Pedidos -->
   <div class="modal-overlay" id="modalMisPedidos">
     <div class="modal-card" style="max-height: 85vh; display: flex; flex-direction: column;">
@@ -1216,6 +1249,23 @@
       inputWhatsapp.addEventListener("input", (e) => {
         e.target.value = e.target.value.replace(/\D/g, '');
       });
+
+      // Auto-detección: si ingresa un teléfono ya registrado, autocompletar nombre
+      inputWhatsapp.addEventListener("change", async (e) => {
+        const val = e.target.value.replace(/\D/g, '').trim();
+        if (val.length >= 7 && (!inputNombre.value.trim() || inputNombre.value.trim() === "")) {
+          try {
+            const user = await SupabaseApi.getUsuarioByWhatsapp(val);
+            if (user && user.nombre) {
+              inputNombre.value = user.nombre;
+              localStorage.setItem("viandas_usuario", JSON.stringify(user));
+              iniciarUsuario();
+              actualizarBadgeMisPedidos();
+              mostrarToastCliente(`👋 ¡Te reconocimos, ${user.nombre}! Cargamos tus datos.`);
+            }
+          } catch(err) {}
+        }
+      });
     }
     const checkRecordar = document.getElementById("checkRecordar");
 
@@ -1229,6 +1279,7 @@
         } catch (e) {}
       }
 
+      const btnHdrLogin = document.getElementById("btnHeaderLogin");
       if (user && user.nombre && user.whatsapp) {
         inputNombre.value = user.nombre;
         inputWhatsapp.value = user.whatsapp;
@@ -1236,12 +1287,14 @@
         displayUserWa.textContent = user.whatsapp;
         userWelcomeCard.style.display = "flex";
         cardDatosCliente.style.display = "none";
+        if (btnHdrLogin) btnHdrLogin.style.display = "none";
         try {
           localStorage.setItem("viandas_usuario", JSON.stringify(user));
         } catch (e) {}
       } else {
         userWelcomeCard.style.display = "none";
         cardDatosCliente.style.display = "block";
+        if (btnHdrLogin) btnHdrLogin.style.display = "inline-flex";
       }
     }
 
@@ -1924,6 +1977,85 @@
     let pollingInterval = null;
     let ultimosPedidosIds = [];
 
+    
+    // Modal Iniciar Sesión por WhatsApp
+    function abrirModalLogin() {
+      const modal = document.getElementById("modalLogin");
+      if (!modal) return;
+      document.getElementById("loginWhatsapp").value = "";
+      document.getElementById("loginErrorMsg").style.display = "none";
+      modal.classList.add("active");
+      setTimeout(() => {
+        const inp = document.getElementById("loginWhatsapp");
+        if (inp) inp.focus();
+      }, 200);
+    }
+
+    function cerrarModalLogin() {
+      const modal = document.getElementById("modalLogin");
+      if (modal) modal.classList.remove("active");
+    }
+
+    async function ejecutarLoginWhatsapp() {
+      const inp = document.getElementById("loginWhatsapp");
+      const errBox = document.getElementById("loginErrorMsg");
+      const btn = document.getElementById("btnEjecutarLogin");
+      if (!inp || !errBox || !btn) return;
+
+      const waClean = inp.value.replace(/\D/g, '').trim();
+      if (!waClean || waClean.length < 7) {
+        errBox.textContent = "Por favor ingresá un número de WhatsApp válido (mínimo 7 dígitos).";
+        errBox.style.display = "block";
+        inp.focus();
+        return;
+      }
+
+      errBox.style.display = "none";
+      btn.disabled = true;
+      btn.textContent = "Buscando tus datos...";
+
+      try {
+        let user = await SupabaseApi.getUsuarioByWhatsapp(waClean);
+        const peds = await SupabaseApi.getPedidosCliente(waClean);
+
+        if (!user && peds && peds.length > 0) {
+          user = {
+            id: peds[0].usuario_id || 1,
+            nombre: peds[0].cliente || "Cliente",
+            whatsapp: waClean
+          };
+        }
+
+        if (user) {
+          localStorage.setItem("viandas_usuario", JSON.stringify(user));
+          iniciarUsuario();
+          cerrarModalLogin();
+          actualizarBadgeMisPedidos();
+          mostrarToastCliente(`👋 ¡Hola de nuevo, ${user.nombre}! Tu sesión fue iniciada.`);
+
+          if (peds && peds.length > 0) {
+            setTimeout(abrirMisPedidos, 400);
+          }
+        } else {
+          errBox.textContent = `No encontramos pedidos previos con el WhatsApp ${waClean}. Podés completar tus datos para hacer tu primer pedido.`;
+          errBox.style.display = "block";
+          inputWhatsapp.value = waClean;
+          setTimeout(() => {
+            cerrarModalLogin();
+            cardDatosCliente.style.display = "block";
+            inputNombre.focus();
+          }, 2500);
+        }
+      } catch (e) {
+        console.error(e);
+        errBox.textContent = "Error al conectar con la base de datos.";
+        errBox.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "🔍 Entrar y recuperar mis pedidos";
+      }
+    }
+
     function renderMisPedidosData(pedidos) {
       const contenedor = document.getElementById("misPedidosLista");
       if (!pedidos || pedidos.length === 0) {
@@ -2065,12 +2197,16 @@
     }
 
     async function abrirMisPedidos() {
+      const wa = (inputWhatsapp ? inputWhatsapp.value.replace(/\D/g, '').trim() : "") || (usuarioServidor ? usuarioServidor.whatsapp : "");
+      if (!wa) {
+        abrirModalLogin();
+        return;
+      }
+
       const modal = document.getElementById("modalMisPedidos");
       const contenedor = document.getElementById("misPedidosLista");
       modal.classList.add("active");
       contenedor.innerHTML = "<p style='color: var(--gray-600); font-size: 0.9rem;'>Cargando tus pedidos...</p>";
-
-      const wa = inputWhatsapp.value.trim();
       try {
         const pedidos = await cargarMisPedidosData(wa);
         renderMisPedidosData(pedidos);
