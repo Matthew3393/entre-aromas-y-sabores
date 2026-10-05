@@ -1000,7 +1000,7 @@
         <input type="text" id="clienteNombre" placeholder="" required>
       </div>
       <div class="form-group">
-        <label for="clienteWhatsapp">Número de WhatsApp * (solo números, mín. 7 dígitos)</label>
+        <label for="clienteWhatsapp">Número de WhatsApp *</label>
         <input type="tel" id="clienteWhatsapp" placeholder="" inputmode="numeric" pattern="[0-9]*" minlength="7" required>
       </div>
       <label class="checkbox-save">
@@ -1139,7 +1139,7 @@
         Ingresá tu número de WhatsApp para recuperar tu nombre y ver los pedidos de viandas que hiciste para esta semana:
       </p>
       <div class="form-group">
-        <label for="loginWhatsapp">Número de WhatsApp (solo números):</label>
+        <label for="loginWhatsapp">Número de WhatsApp:</label>
         <input type="tel" id="loginWhatsapp" placeholder="" inputmode="numeric" pattern="[0-9]*" minlength="7" style="font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px;">
       </div>
       <div id="loginErrorMsg" style="display: none; background: #fee2e2; color: #991b1b; padding: 8px 12px; border-radius: 8px; font-size: 0.82rem; font-weight: 700; margin-bottom: 12px; border: 1px solid #fca5a5;"></div>
@@ -1949,7 +1949,7 @@
 
       const waClean = inp.value.replace(/\D/g, '').trim();
       if (!waClean || waClean.length < 7) {
-        errBox.textContent = "Por favor ingresá un número de WhatsApp válido (mínimo 7 dígitos).";
+        errBox.textContent = "Por favor ingresá un número de WhatsApp válido.";
         errBox.style.display = "block";
         inp.focus();
         return;
