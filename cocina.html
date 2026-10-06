@@ -443,21 +443,51 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(4px);
-      z-index: 999;
+      z-index: 9999;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 16px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .modal-overlay.active { display: flex; }
     .modal-card {
       background: white;
       border-radius: 20px;
-      padding: 26px;
+      padding: 24px 20px;
       max-width: 480px;
       width: 100%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      max-height: 90vh;
+      max-height: 90dvh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      margin: auto;
+    }
+    .modal-header-sticky {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+    .modal-body-scroll {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      flex: 1;
+      padding-right: 6px;
+      padding-bottom: 6px;
+    }
+    .modal-body-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal-body-scroll::-webkit-scrollbar-thumb {
+      background: var(--gray-300);
+      border-radius: 4px;
     }
     .form-group { margin-bottom: 14px; }
     .form-group label {
@@ -858,57 +888,64 @@
   <!-- Modal Agregar / Editar Plato -->
   <div class="modal-overlay" id="modalPlato">
     <div class="modal-card">
-      <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--dark); margin-bottom: 14px;" id="modalPlatoTitulo">
-        ➕ Agregar Plato al Menú
-      </h3>
-      <form id="formPlato" onsubmit="guardarPlato(event)" enctype="multipart/form-data">
+      <div class="modal-header-sticky">
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--dark); margin: 0;" id="modalPlatoTitulo">
+          ➕ Agregar Plato al Menú
+        </h3>
+        <button type="button" onclick="cerrarModalPlato()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--gray-600); padding: 4px; line-height: 1;">✕</button>
+      </div>
+
+      <form id="formPlato" onsubmit="guardarPlato(event)" enctype="multipart/form-data" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0;">
         <input type="hidden" id="platoId" name="id">
-        <div class="form-group">
-          <label for="platoNombre">Nombre de la Vianda / Comida *</label>
-          <input type="text" id="platoNombre" name="nombre" placeholder="Ej: Pastel de Papa" required>
-        </div>
-        <div class="form-group">
-          <label for="platoDia">Día de Disponibilidad *</label>
-          <select id="platoDia" name="dia" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--gray-200); font-size: 0.95rem; font-family: inherit;">
-            <option value="Todos">⭐ Todos los días (Plato Fijo / Permanente)</option>
-            <option value="Lunes">📅 Lunes (Menú del día)</option>
-            <option value="Martes">📅 Martes (Menú del día)</option>
-            <option value="Miércoles">📅 Miércoles (Menú del día)</option>
-            <option value="Jueves">📅 Jueves (Menú del día)</option>
-            <option value="Viernes">📅 Viernes (Menú del día)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="platoPrecio">Precio ($) *</label>
-          <input type="number" id="platoPrecio" name="precio" placeholder="Ej: 1500" step="50" min="0" required>
-        </div>
-        <div class="form-group">
-          <label for="platoSabores">Sabores o Variedades a elección (opcional, separados por coma)</label>
-          <input type="text" id="platoSabores" name="sabores" placeholder="Ej: Carne, Verdura, Jamón y Queso">
-          <small style="color: var(--gray-600); font-size: 0.78rem;">Al cliente se le abrirá un selector de sabores para elegir exactamente sus gustos.</small>
-        </div>
-        <div class="form-group">
-          <label for="platoDescripcion">Descripción o aclaración corta (opcional)</label>
-          <input type="text" id="platoDescripcion" name="descripcion" placeholder="Ej: Bandeja de 3 empanadas a elección">
-        </div>
-        <div class="form-group">
-          <label for="platoAliases">Palabras clave / Alias (separados por coma)</label>
-          <input type="text" id="platoAliases" name="aliases" placeholder="Ej: pastel de papa, pastel, pastel de carne">
-        </div>
-        <div class="form-group">
-          <label for="platoFotoArchivo">Subir Foto del Plato (desde el celu o compu)</label>
-          <input type="file" id="platoFotoArchivo" name="foto_archivo" accept="image/*" onchange="previewFotoLocal(event)">
-        </div>
-        <div class="form-group">
-          <label for="platoFotoUrl">O enlace web de foto (opcional)</label>
-          <input type="url" id="platoFotoUrl" name="foto_url" placeholder="https://ejemplo.com/foto.jpg" oninput="previewFotoUrl(this.value)">
-        </div>
-        <div id="fotoPreviewContainer" style="display: none; margin-bottom: 14px; text-align: center;">
-          <label style="font-size: 0.8rem; color: var(--gray-600); display: block; margin-bottom: 4px;">Vista previa de la foto:</label>
-          <img id="imgPreview" src="" alt="Vista previa" style="max-height: 120px; border-radius: 10px; border: 1.5px solid var(--gray-200); object-fit: cover;">
+
+        <div class="modal-body-scroll">
+          <div class="form-group">
+            <label for="platoNombre">Nombre de la Vianda / Comida *</label>
+            <input type="text" id="platoNombre" name="nombre" placeholder="Ej: Pastel de Papa" required>
+          </div>
+          <div class="form-group">
+            <label for="platoDia">Día de Disponibilidad *</label>
+            <select id="platoDia" name="dia" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1.5px solid var(--gray-200); font-size: 0.95rem; font-family: inherit;">
+              <option value="Todos">⭐ Todos los días (Plato Fijo / Permanente)</option>
+              <option value="Lunes">📅 Lunes (Menú del día)</option>
+              <option value="Martes">📅 Martes (Menú del día)</option>
+              <option value="Miércoles">📅 Miércoles (Menú del día)</option>
+              <option value="Jueves">📅 Jueves (Menú del día)</option>
+              <option value="Viernes">📅 Viernes (Menú del día)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="platoPrecio">Precio ($) *</label>
+            <input type="number" id="platoPrecio" name="precio" placeholder="Ej: 1500" step="50" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="platoSabores">Sabores o Variedades a elección (opcional, separados por coma)</label>
+            <input type="text" id="platoSabores" name="sabores" placeholder="Ej: Carne, Verdura, Jamón y Queso">
+            <small style="color: var(--gray-600); font-size: 0.78rem;">Al cliente se le abrirá un selector de sabores para elegir exactamente sus gustos.</small>
+          </div>
+          <div class="form-group">
+            <label for="platoDescripcion">Descripción o aclaración corta (opcional)</label>
+            <input type="text" id="platoDescripcion" name="descripcion" placeholder="Ej: Bandeja de 3 empanadas a elección">
+          </div>
+          <div class="form-group">
+            <label for="platoAliases">Palabras clave / Alias (separados por coma)</label>
+            <input type="text" id="platoAliases" name="aliases" placeholder="Ej: pastel de papa, pastel, pastel de carne">
+          </div>
+          <div class="form-group">
+            <label for="platoFotoArchivo">Subir Foto del Plato (desde el celu o compu)</label>
+            <input type="file" id="platoFotoArchivo" name="foto_archivo" accept="image/*" onchange="previewFotoLocal(event)">
+          </div>
+          <div class="form-group">
+            <label for="platoFotoUrl">O enlace web de foto (opcional)</label>
+            <input type="url" id="platoFotoUrl" name="foto_url" placeholder="https://ejemplo.com/foto.jpg" oninput="previewFotoUrl(this.value)">
+          </div>
+          <div id="fotoPreviewContainer" style="display: none; margin-bottom: 14px; text-align: center;">
+            <label style="font-size: 0.8rem; color: var(--gray-600); display: block; margin-bottom: 4px;">Vista previa de la foto:</label>
+            <img id="imgPreview" src="" alt="Vista previa" style="max-height: 120px; border-radius: 10px; border: 1.5px solid var(--gray-200); object-fit: cover;">
+          </div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <div style="display: flex; gap: 10px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--gray-200); flex-shrink: 0;">
           <button type="submit" class="btn btn-accent" style="flex: 1; justify-content: center;" id="btnGuardarPlato">
             Guardar Plato
           </button>
