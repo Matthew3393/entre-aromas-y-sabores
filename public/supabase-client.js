@@ -190,19 +190,19 @@ function calcularEstadoHorario(cfg) {
     };
   }
 
-  // Modo AUTO: Lunes a Miércoles 12:00 PM
+  // Modo AUTO: Lunes a Jueves 12:00 PM
   const now = new Date();
   const day = now.getDay(); // 0 Dom, 1 Lun, 2 Mar, 3 Mie, 4 Jue, 5 Vie, 6 Sab
   const hour = now.getHours();
   const minute = now.getMinutes();
 
-  if (day === 1 || day === 2) { // Lunes o Martes
+  if (day === 1 || day === 2 || day === 3) { // Lunes, Martes o Miércoles
     return {
       abierto: true,
-      mensaje: 'Abierto (cierra el Miércoles a las 12 PM)'
+      mensaje: 'Abierto (cierra el Jueves a las 12 PM)'
     };
   }
-  if (day === 3) { // Miércoles
+  if (day === 4) { // Jueves
     if (hour < 12) {
       const minutosRestantes = (11 - hour) * 60 + (60 - minute);
       const h = Math.floor(minutosRestantes / 60);
@@ -214,7 +214,7 @@ function calcularEstadoHorario(cfg) {
     } else {
       return {
         abierto: false,
-        mensaje: 'Pedidos cerrados hoy Miércoles a las 12 PM. Se habilita el lunes.'
+        mensaje: 'Pedidos cerrados hoy Jueves a las 12 PM. Se habilita el lunes.'
       };
     }
   }
@@ -234,11 +234,11 @@ function puedeCancelarPedido(pedido, cfg) {
   }
   const estado = calcularEstadoHorario(cfg);
   if (estado.abierto) {
-    return { puede: true, motivo: 'Podés modificar o cancelar tu pedido hasta el Miércoles a las 12 PM.' };
+    return { puede: true, motivo: 'Podés modificar o cancelar tu pedido hasta el Jueves a las 12 PM.' };
   }
   return {
     puede: false,
-    motivo: 'El plazo para cancelar finalizó el Miércoles a las 12 PM. Para cambios urgentes, por favor comunicate directamente por WhatsApp.'
+    motivo: 'El plazo para cancelar finalizó el Jueves a las 12 PM. Para cambios urgentes, por favor comunicate directamente por WhatsApp.'
   };
 }
 
