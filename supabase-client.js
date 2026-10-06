@@ -226,6 +226,9 @@ function calcularEstadoHorario(cfg) {
 }
 
 function puedeCancelarPedido(pedido, cfg) {
+  if (pedido.pagado) {
+    return { puede: false, motivo: 'El pedido ya fue registrado como abonado y confirmado por la cocina.' };
+  }
   if (pedido.entregado) {
     return { puede: false, motivo: 'El pedido ya fue entregado.' };
   }
