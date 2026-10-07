@@ -171,12 +171,24 @@ const Api = {
       headers
     });
     return res.ok;
+  },
+
+  async toggleDisponiblePlato(id, nuevoEstado) {
+    // Si nuevoEstado es false -> guardamos tipo = 'agotado'
+    // Si nuevoEstado es true -> guardamos tipo = ''
+    const tipoVal = nuevoEstado ? '' : 'agotado';
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/catalogo?id=eq.${id}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ tipo: tipoVal })
+    });
+    return res.ok;
   }
 };
 
 // Control de horario
 function calcularEstadoHorario(cfg) {
-  const modo = (cfg && cfg.modo_pedidos) ? cfg.modo_pedidos : 'abierto';
+  const modo = (cfg && cfg.modo_pedidos) ? cfg.modo_pedidos : 'auto';
   if (modo === 'abierto') {
     return {
       abierto: true,
@@ -190,7 +202,7 @@ function calcularEstadoHorario(cfg) {
     };
   }
 
-  // Modo AUTO: Lunes a Jueves 12:00 PM
+  // Modo AUTO: Lunes a Jueves hasta las 23:59 hs
   const now = new Date();
   const day = now.getDay(); // 0 Dom, 1 Lun, 2 Mar, 3 Mie, 4 Jue, 5 Vie, 6 Sab
   const hour = now.getHours();
@@ -199,24 +211,17 @@ function calcularEstadoHorario(cfg) {
   if (day === 1 || day === 2 || day === 3) { // Lunes, Martes o Miércoles
     return {
       abierto: true,
-      mensaje: 'Abierto (cierra el Jueves a las 12 PM)'
+      mensaje: 'Abierto (cierra el Jueves a las 23:59)'
     };
   }
-  if (day === 4) { // Jueves
-    if (hour < 12) {
-      const minutosRestantes = (11 - hour) * 60 + (60 - minute);
-      const h = Math.floor(minutosRestantes / 60);
-      const m = minutosRestantes % 60;
-      return {
-        abierto: true,
-        mensaje: `Abierto (cierra hoy a las 12 PM - quedan ${h}h ${m}m)`
-      };
-    } else {
-      return {
-        abierto: false,
-        mensaje: 'Pedidos cerrados hoy Jueves a las 12 PM. Se habilita el lunes.'
-      };
-    }
+  if (day === 4) { // Jueves (abierto todo el día hasta las 23:59)
+    const minutosRestantes = (23 - hour) * 60 + (59 - minute);
+    const h = Math.floor(minutosRestantes / 60);
+    const m = minutosRestantes % 60;
+    return {
+      abierto: true,
+      mensaje: `Abierto (cierra hoy a las 23:59 - quedan ${h}h ${m}m)`
+    };
   }
 
   return {
@@ -234,11 +239,11 @@ function puedeCancelarPedido(pedido, cfg) {
   }
   const estado = calcularEstadoHorario(cfg);
   if (estado.abierto) {
-    return { puede: true, motivo: 'Podés modificar o cancelar tu pedido hasta el Jueves a las 12 PM.' };
+    return { puede: true, motivo: 'Podés modificar o cancelar tu pedido hasta el Jueves a las 23:59.' };
   }
   return {
     puede: false,
-    motivo: 'El plazo para cancelar finalizó el Jueves a las 12 PM. Para cambios urgentes, por favor comunicate directamente por WhatsApp.'
+    motivo: 'El plazo para cancelar finalizó el Jueves a las 23:59. Para cambios urgentes, por favor comunicate directamente por WhatsApp.'
   };
 }
 

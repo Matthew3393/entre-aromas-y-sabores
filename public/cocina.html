@@ -417,6 +417,39 @@
       border-color: #10b981;
       transform: translateY(-1px);
     }
+    .btn-disp-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1.5px solid transparent;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .btn-disp-toggle.disp-si {
+      background: #ecfdf5;
+      color: #059669;
+      border-color: #a7f3d0;
+    }
+    .btn-disp-toggle.disp-si:hover {
+      background: #d1fae5;
+      border-color: #10b981;
+    }
+    .btn-disp-toggle.disp-no {
+      background: #f1f5f9;
+      color: #64748b;
+      border-color: #cbd5e1;
+    }
+    .btn-disp-toggle.disp-no:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
 
     .btn-wa {
       background: #25d366;
@@ -640,7 +673,7 @@
         <div class="schedule-input-group">
           <label for="cfgModo">Modo de Apertura de la Web:</label>
           <select id="cfgModo" name="modo_pedidos">
-            <option value="auto" >🕒 Automático (Abierto Lun a Jue 12 PM, Cerrado Jue tarde a Dom)</option>
+            <option value="auto" >🕒 Automático (Abierto Lun a Jue 23:59 hs, Cerrado Vier a Dom)</option>
             <option value="abierto" >🔓 Forzar Abierto (Permitir pedidos siempre / Modo pruebas)</option>
             <option value="cerrado" >🔒 Forzar Cerrado (Cerrar pedidos inmediatamente)</option>
           </select>
@@ -845,6 +878,7 @@
               <th>Día de Venta</th>
               <th>Precio ($)</th>
               <th>Sabores / Variedades</th>
+              <th>Disponibilidad</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -1224,17 +1258,24 @@
           `<span style="background: #f1f5f9; padding: 3px 6px; border-radius: 4px; font-size: 0.78rem; color: #334155; display: inline-block;">${it.sabores.join(", ")}</span>` :
           `<span style="color: var(--gray-400);">-</span>`;
 
+        const estaDisponible = it.tipo !== 'agotado';
+        const dispBtnHtml = estaDisponible
+          ? `<button type="button" class="btn-disp-toggle disp-si" onclick="toggleDisponibilidadPlato(${it.id}, '${it.nombre.replace(/'/g, "\\'")}', false)">🟢 Disponible</button>`
+          : `<button type="button" class="btn-disp-toggle disp-no" onclick="toggleDisponibilidadPlato(${it.id}, '${it.nombre.replace(/'/g, "\\'")}', true)">⚪ No disponible</button>`;
+
         html += `
-          <tr id="plato-row-${it.id}" data-dias="${diasListStr}">
+          <tr id="plato-row-${it.id}" data-dias="${diasListStr}" style="${!estaDisponible ? 'opacity: 0.65; background: #f8fafc;' : ''}">
             <td>#${it.id}</td>
             <td>${fotoHtml}</td>
             <td>
               <b>${it.nombre}</b>
+              ${!estaDisponible ? '<span style="display: block; font-size: 0.75rem; color: #dc2626; font-weight: 700; margin-top: 2px;">(Pausado temporalmente)</span>' : ''}
               ${it.descripcion ? `<div style="font-size: 0.8rem; color: var(--gray-600); margin-top: 2px;">${it.descripcion}</div>` : ''}
             </td>
             <td>${badgeDias}</td>
             <td><b style="color: var(--accent); font-size: 1rem;">$${Math.round(it.precio).toLocaleString('es-AR')}</b></td>
             <td style="font-size: 0.84rem; color: var(--gray-600);">${saboresHtml}</td>
+            <td>${dispBtnHtml}</td>
             <td>
               <div style="display: flex; gap: 6px;">
                 <button type="button" class="btn-sm btn-edit" onclick='editarPlato(${JSON.stringify(it)})'>✏️ Editar</button>
@@ -1590,6 +1631,8 @@
       const aliases = aliasesRaw ? aliasesRaw.split(",").map(a => a.trim()).filter(Boolean) : [];
       const dias = dia === "Todos" ? ["Todos"] : [dia];
 
+      const platoExistente = idVal ? catalogoGlobal.find(it => it.id === parseInt(idVal)) : null;
+
       const itemData = {
         nombre,
         precio,
@@ -1598,7 +1641,7 @@
         aliases,
         descripcion,
         foto,
-        tipo: ""
+        tipo: platoExistente ? (platoExistente.tipo || "") : ""
       };
       if (idVal) itemData.id = parseInt(idVal);
 
@@ -1627,6 +1670,27 @@
       } catch (err) {
         console.error(err);
         alert("Error al eliminar plato.");
+      }
+    }
+
+    async function toggleDisponibilidadPlato(id, nombre, nuevoEstado) {
+      const plato = catalogoGlobal.find(it => it.id === id);
+      if (!plato) return;
+
+      const accionTexto = nuevoEstado ? "habilitar" : "deshabilitar temporalmente";
+      const confirmado = confirm(`¿Querés ${accionTexto} '${nombre}' en la web de clientes?`);
+      if (!confirmado) return;
+
+      try {
+        await SupabaseApi.toggleDisponiblePlato(id, nuevoEstado);
+        plato.tipo = nuevoEstado ? '' : 'agotado';
+        renderTablaCatalogo();
+        mostrarToastCocina(nuevoEstado 
+          ? `🟢 '${nombre}' ahora figura DISPONIBLE para los clientes.` 
+          : `⚪ '${nombre}' ahora figura NO DISPONIBLE en la web.`);
+      } catch (err) {
+        console.error(err);
+        alert("Error al cambiar la disponibilidad del plato.");
       }
     }
 

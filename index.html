@@ -239,6 +239,25 @@
       padding-bottom: 0;
     }
 
+    .dish-disabled {
+      opacity: 0.55 !important;
+      filter: grayscale(85%) !important;
+      pointer-events: none !important;
+      cursor: not-allowed !important;
+      user-select: none !important;
+    }
+    .badge-no-disponible {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
     .dish-info {
       flex: 1;
       padding-right: 12px;
@@ -1376,6 +1395,7 @@
     }
 
     function crearElementoPlato(item) {
+      const estaDisponible = item.tipo !== 'agotado';
       const tieneSabores = item.sabores && item.sabores.length > 0;
       const esEmpanada = item.tipo === 'empanadas' || item.nombre.toLowerCase().includes('empanada');
       const esSandwich = item.tipo === 'sandwiches' || item.nombre.toLowerCase().includes('sandwich') || item.nombre.toLowerCase().includes('sanguche');
@@ -1383,6 +1403,24 @@
       const photoHtml = item.foto 
         ? `<img src="${item.foto}" class="dish-thumb" alt="${item.nombre}">`
         : `<div class="dish-placeholder">${esEmpanada ? '🥟' : esSandwich ? '🥪' : item.tipo === 'tarta' ? '🥧' : item.tipo === 'ensalada' ? '🥗' : '🍲'}</div>`;
+
+      // CASO ESPECIAL: PLATO NO DISPONIBLE TEMPORALMENTE (PAUSADO DESDE COCINA)
+      if (!estaDisponible) {
+        const row = document.createElement("div");
+        row.className = "dish-item dish-disabled";
+        row.innerHTML = `
+          ${photoHtml}
+          <div class="dish-info">
+            <div class="dish-name">${item.nombre}</div>
+            <div class="dish-price">$${item.precio.toLocaleString('es-AR', {minimumFractionDigits: 0})}</div>
+            <div class="badge-no-disponible">⚪ No disponible temporalmente</div>
+          </div>
+          <div style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; padding: 6px 10px; background: #f8fafc; border-radius: 8px;">
+            Agotado
+          </div>
+        `;
+        return row;
+      }
 
       // CASO 1: PLATOS CON SELECCIÓN DE SABORES (Empanadas, Sánguches, Tartas, Ensaladas)
       if (tieneSabores) {
@@ -2376,7 +2414,7 @@
                 <div class="schedule-content">
                   <div class="schedule-title">Pedidos abiertos para la próxima semana</div>
                   <div class="schedule-desc">
-                    ${estadoHorario.mensaje}. Podés elegir o modificar tus viandas de Lunes a Viernes hasta el <strong>Jueves a las 12 PM</strong>.
+                    ${estadoHorario.mensaje}. Podés elegir o modificar tus viandas de Lunes a Viernes hasta el <strong>Jueves a las 23:59 hs</strong>.
                   </div>
                 </div>
               </div>
