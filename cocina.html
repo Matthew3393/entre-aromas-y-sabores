@@ -1173,6 +1173,33 @@
       container.innerHTML = html;
     }
 
+    function normalizarWhatsAppArgentina(numRaw) {
+      if (!numRaw) return "";
+      let d = numRaw.replace(/\D/g, "");
+      if (!d) return "";
+      
+      // Si ya empieza con 549 (ej: 5492944667288)
+      if (d.startsWith("549") && d.length >= 12) return d;
+      
+      // Si empieza con 54 pero sin el 9 (ej: 542944667288) -> agregar el 9 móvil de Argentina
+      if (d.startsWith("54") && !d.startsWith("549") && d.length >= 11) {
+        return "549" + d.slice(2);
+      }
+      
+      // Si empieza con 0 (ej: 02975444801 o 011...) -> quitar el 0 de larga distancia
+      if (d.startsWith("0")) {
+        d = d.replace(/^0+/, "");
+      }
+      
+      // Si empieza con 15 (ej: 154667288) -> quitar el 15 local
+      if (d.startsWith("15") && d.length === 9) {
+        d = d.slice(2);
+      }
+      
+      // Anteponer código internacional de Argentina (+54 9)
+      return "549" + d;
+    }
+
     function renderTablaPedidos() {
       const tbody = document.querySelector("#secPedidos tbody");
       if (!tbody) return;
@@ -1184,8 +1211,8 @@
 
       let html = "";
       pedidosGlobal.forEach(p => {
-        const waClean = (p.whatsapp || "").replace(/\D/g, "");
-        const waLink = waClean ? `<a href="https://wa.me/${waClean}" target="_blank" class="btn-wa">💬 ${p.whatsapp}</a>` : `<span style="color: var(--gray-600);">-</span>`;
+        const waNorm = normalizarWhatsAppArgentina(p.whatsapp);
+        const waLink = waNorm ? `<a href="https://wa.me/${waNorm}" target="_blank" class="btn-wa">💬 ${p.whatsapp}</a>` : `<span style="color: var(--gray-600);">-</span>`;
 
         html += `
           <tr id="row-${p.id}" data-id="${p.id}" data-dia="${p.dia}" data-cliente="${p.cliente}" data-pagado="${p.pagado ? '1' : '0'}">
@@ -1328,8 +1355,8 @@
 
       let html = "";
       listaClientes.forEach(cli => {
-        const waClean = (cli.whatsapp || "").replace(/\D/g, "");
-        const waLink = waClean ? `<a href="https://wa.me/${waClean}" target="_blank" class="btn-wa">💬 ${cli.whatsapp}</a>` : `<span style="color: var(--gray-600);">-</span>`;
+        const waNorm = normalizarWhatsAppArgentina(cli.whatsapp);
+        const waLink = waNorm ? `<a href="https://wa.me/${waNorm}" target="_blank" class="btn-wa">💬 ${cli.whatsapp}</a>` : `<span style="color: var(--gray-600);">-</span>`;
 
         const saldoPendiente = cli.totalDinero - cli.totalPagado;
         const estaPagadoCompleto = (cli.totalPagado >= cli.totalDinero && cli.totalDinero > 0);
