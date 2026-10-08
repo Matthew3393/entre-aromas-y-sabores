@@ -640,6 +640,7 @@
   </style>
   <script src="supabase-client.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 </head>
 <body>
 
@@ -1694,8 +1695,310 @@
       }
     }
 
-    // EXPORTACIÓN A EXCEL EN EL NAVEGADOR (SheetJS)
-    function descargarExcelLocal() {
+    // EXPORTACIÓN A EXCEL EN EL NAVEGADOR (Con diseño profesional, colores y bordes)
+    async function descargarExcelLocal() {
+      // Si ExcelJS está disponible, creamos un archivo estilizado profesional idéntico al motor original
+      if (typeof ExcelJS !== "undefined") {
+        try {
+          const workbook = new ExcelJS.Workbook();
+          workbook.creator = "Entre Aromas y Sabores";
+          workbook.created = new Date();
+
+          // Paleta de estilos
+          const headerFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };      // Azul marino
+          const subHeaderFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2563EB' } };   // Azul medio
+          const accentFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFF6FF' } };      // Azul pastel
+          const totalFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEF3C7' } };       // Amarillo suave
+          const greenFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDCFCE7' } };       // Verde claro
+          const redFill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFEE2E2' } };         // Rojo claro
+
+          const fontHeader = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+          const fontBold = { name: 'Calibri', size: 11, bold: true };
+          const fontRegular = { name: 'Calibri', size: 11 };
+          const fontGreen = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF166534' } };
+          const fontRed = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF991B1B' } };
+
+          const thinBorder = {
+            top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            bottom: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+          };
+          const doubleBottomBorder = {
+            top: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            left: { style: 'thin', color: { argb: 'FFCBD5E1' } },
+            bottom: { style: 'double', color: { argb: 'FF1E3A8A' } },
+            right: { style: 'thin', color: { argb: 'FFCBD5E1' } }
+          };
+
+          // -------------------------------------------------------------
+          // HOJA 1: PEDIDOS
+          // -------------------------------------------------------------
+          const wsPedidos = workbook.addWorksheet('Pedidos', { views: [{ showGridLines: true }] });
+          const headersPedidos = ["ID", "Día Entrega", "Cliente", "WhatsApp", "Plato Solicitado", "Cant.", "Precio Unit.", "Total ($)", "Estado Pago", "Entregado", "Notas / Fecha"];
+          wsPedidos.addRow(headersPedidos);
+
+          wsPedidos.getRow(1).height = 26;
+          wsPedidos.getRow(1).eachCell(cell => {
+            cell.font = fontHeader;
+            cell.fill = headerFill;
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.border = thinBorder;
+          });
+
+          let sumCant = 0;
+          let sumDinero = 0;
+          let rIdx = 2;
+
+          pedidosGlobal.forEach(p => {
+            const cant = p.cantidad || 1;
+            const tot = p.total || 0;
+            sumCant += cant;
+            sumDinero += tot;
+
+            const row = wsPedidos.addRow([
+              p.id,
+              p.dia,
+              p.cliente,
+              p.whatsapp || "",
+              p.plato,
+              cant,
+              p.precio_unitario || (tot / cant),
+              tot,
+              p.pagado ? "PAGADO" : "PENDIENTE",
+              p.entregado ? "ENTREGADO" : "PENDIENTE",
+              p.notas || p.fecha_registro || ""
+            ]);
+
+            row.height = 21;
+            row.getCell(1).alignment = { horizontal: 'center', vertical: 'middle' };
+            row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+            row.getCell(3).alignment = { horizontal: 'left', vertical: 'middle' };
+            row.getCell(4).alignment = { horizontal: 'center', vertical: 'middle' };
+            row.getCell(5).alignment = { horizontal: 'left', vertical: 'middle' };
+            row.getCell(6).alignment = { horizontal: 'center', vertical: 'middle' };
+
+            row.getCell(7).alignment = { horizontal: 'right', vertical: 'middle' };
+            row.getCell(7).numFmt = '$#,##0.00';
+
+            row.getCell(8).alignment = { horizontal: 'right', vertical: 'middle' };
+            row.getCell(8).numFmt = '$#,##0.00';
+
+            // Estado de Pago
+            const cPago = row.getCell(9);
+            cPago.alignment = { horizontal: 'center', vertical: 'middle' };
+            if (p.pagado) {
+              cPago.fill = greenFill;
+              cPago.font = fontGreen;
+            } else {
+              cPago.fill = redFill;
+              cPago.font = fontRed;
+            }
+
+            // Estado de Entrega
+            const cEnt = row.getCell(10);
+            cEnt.alignment = { horizontal: 'center', vertical: 'middle' };
+            if (p.entregado) {
+              cEnt.fill = greenFill;
+              cEnt.font = fontGreen;
+            } else {
+              cEnt.fill = accentFill;
+              cEnt.font = fontBold;
+            }
+
+            row.getCell(11).alignment = { horizontal: 'left', vertical: 'middle' };
+
+            for (let c = 1; c <= 11; c++) {
+              row.getCell(c).border = thinBorder;
+            }
+            rIdx++;
+          });
+
+          // Fila de Totales
+          if (rIdx > 2) {
+            const rowTot = wsPedidos.addRow(["", "", "", "", "TOTAL GENERAL:", sumCant, "", sumDinero, "", "", ""]);
+            rowTot.height = 24;
+            rowTot.getCell(5).font = fontBold;
+            rowTot.getCell(5).alignment = { horizontal: 'right', vertical: 'middle' };
+
+            const cTotCant = rowTot.getCell(6);
+            cTotCant.font = fontBold;
+            cTotCant.alignment = { horizontal: 'center', vertical: 'middle' };
+            cTotCant.fill = totalFill;
+
+            const cTotDin = rowTot.getCell(8);
+            cTotDin.font = fontBold;
+            cTotDin.alignment = { horizontal: 'right', vertical: 'middle' };
+            cTotDin.numFmt = '$#,##0.00';
+            cTotDin.fill = totalFill;
+
+            for (let c = 1; c <= 11; c++) {
+              rowTot.getCell(c).border = doubleBottomBorder;
+            }
+          }
+
+          // -------------------------------------------------------------
+          // HOJA 2: PARA LA COCINA (RESUMEN POR DÍA)
+          // -------------------------------------------------------------
+          const wsCocina = workbook.addWorksheet('Para la Cocina', { views: [{ showGridLines: true }] });
+          const headersCocina = ["Día", "Plato a Preparar", "Cantidad a Cocinar", "Clientes que pidieron"];
+          wsCocina.addRow(headersCocina);
+
+          wsCocina.getRow(1).height = 26;
+          wsCocina.getRow(1).eachCell(cell => {
+            cell.font = fontHeader;
+            cell.fill = subHeaderFill;
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.border = thinBorder;
+          });
+
+          const diasAgrup = {};
+          pedidosGlobal.forEach(p => {
+            const d = p.dia || "Varios";
+            const pl = p.plato || "Sin nombre";
+            const c = p.cantidad || 1;
+            const cli = p.cliente || "";
+            diasAgrup[d] = diasAgrup[d] || {};
+            diasAgrup[d][pl] = diasAgrup[d][pl] || { cant: 0, clientes: [] };
+            diasAgrup[d][pl].cant += c;
+            diasAgrup[d][pl].clientes.push(c > 1 ? `${cli} (x${c})` : cli);
+          });
+
+          DIAS_LISTA.forEach(dia => {
+            if (diasAgrup[dia]) {
+              let primero = true;
+              Object.entries(diasAgrup[dia]).forEach(([plato, info]) => {
+                const row = wsCocina.addRow([
+                  primero ? dia : "",
+                  plato,
+                  info.cant,
+                  info.clientes.join(", ")
+                ]);
+                row.height = 21;
+
+                const cDia = row.getCell(1);
+                cDia.font = primero ? fontBold : fontRegular;
+                cDia.alignment = { horizontal: 'center', vertical: 'middle' };
+                if (primero) cDia.fill = accentFill;
+
+                row.getCell(2).alignment = { horizontal: 'left', vertical: 'middle' };
+                row.getCell(2).font = fontRegular;
+
+                const cCnt = row.getCell(3);
+                cCnt.alignment = { horizontal: 'center', vertical: 'middle' };
+                cCnt.font = fontBold;
+                cCnt.fill = totalFill;
+
+                row.getCell(4).alignment = { horizontal: 'left', vertical: 'middle' };
+                row.getCell(4).font = fontRegular;
+
+                for (let c = 1; c <= 4; c++) {
+                  row.getCell(c).border = thinBorder;
+                }
+                primero = false;
+              });
+            }
+          });
+
+          // -------------------------------------------------------------
+          // HOJA 3: CUENTAS CLIENTES
+          // -------------------------------------------------------------
+          const wsCli = workbook.addWorksheet('Cuentas Clientes', { views: [{ showGridLines: true }] });
+          const headersCli = ["Cliente", "WhatsApp", "Cant. Viandas", "Total a Pagar ($)", "Total Pagado ($)", "Saldo Pendiente ($)"];
+          wsCli.addRow(headersCli);
+
+          wsCli.getRow(1).height = 26;
+          wsCli.getRow(1).eachCell(cell => {
+            cell.font = fontHeader;
+            cell.fill = headerFill;
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.border = thinBorder;
+          });
+
+          const cuentasCli = {};
+          pedidosGlobal.forEach(p => {
+            const cli = p.cliente || "Sin nombre";
+            if (!cuentasCli[cli]) {
+              cuentasCli[cli] = { whatsapp: p.whatsapp || "", viandas: 0, total: 0, pagado: 0 };
+            }
+            cuentasCli[cli].viandas += (p.cantidad || 1);
+            cuentasCli[cli].total += (p.total || 0);
+            if (p.pagado) cuentasCli[cli].pagado += (p.total || 0);
+          });
+
+          Object.entries(cuentasCli).sort((a, b) => a[0].localeCompare(b[0])).forEach(([cli, info]) => {
+            const saldo = info.total - info.pagado;
+            const row = wsCli.addRow([
+              cli,
+              info.whatsapp,
+              info.viandas,
+              info.total,
+              info.pagado,
+              saldo
+            ]);
+            row.height = 21;
+
+            row.getCell(1).alignment = { horizontal: 'left', vertical: 'middle' };
+            row.getCell(2).alignment = { horizontal: 'center', vertical: 'middle' };
+            row.getCell(3).alignment = { horizontal: 'center', vertical: 'middle' };
+
+            row.getCell(4).alignment = { horizontal: 'right', vertical: 'middle' };
+            row.getCell(4).numFmt = '$#,##0.00';
+
+            row.getCell(5).alignment = { horizontal: 'right', vertical: 'middle' };
+            row.getCell(5).numFmt = '$#,##0.00';
+
+            const cSaldo = row.getCell(6);
+            cSaldo.alignment = { horizontal: 'right', vertical: 'middle' };
+            cSaldo.numFmt = '$#,##0.00';
+            cSaldo.font = fontBold;
+            if (saldo > 0) {
+              cSaldo.fill = redFill;
+              cSaldo.font = fontRed;
+            } else {
+              cSaldo.fill = greenFill;
+              cSaldo.font = fontGreen;
+            }
+
+            for (let c = 1; c <= 6; c++) {
+              row.getCell(c).border = thinBorder;
+            }
+          });
+
+          // Ajuste automático del ancho de columnas para todas las hojas con margen visual
+          [wsPedidos, wsCocina, wsCli].forEach(ws => {
+            ws.columns.forEach(col => {
+              let maxLen = 0;
+              col.eachCell({ includeEmpty: true }, cell => {
+                if (cell.value !== null && cell.value !== undefined) {
+                  const s = cell.value.toString();
+                  maxLen = Math.max(maxLen, s.length);
+                }
+              });
+              col.width = Math.max(maxLen + 4, 12);
+            });
+          });
+
+          // Generar buffer y descargar
+          const buffer = await workbook.xlsx.writeBuffer();
+          const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "viandas_semanales.xlsx";
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+
+          mostrarToastCocina("📊 ¡Excel profesional generado con éxito!");
+          return;
+        } catch (err) {
+          console.error("Error generando Excel con ExcelJS, usando fallback SheetJS:", err);
+        }
+      }
+
+      // FALLBACK SI NO CARGÓ EXCELJS
       if (typeof XLSX === "undefined") {
         alert("Cargando componente de exportación Excel. Por favor reintentá en un instante.");
         return;
